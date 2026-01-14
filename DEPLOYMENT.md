@@ -1,378 +1,227 @@
 # Guide de Déploiement VPS - Bible Journey
 
-## Prérequis sur le VPS
-
-### Système d'exploitation recommandé
-- Ubuntu 22.04 LTS ou Debian 12
-
-### Logiciels requis
-- Node.js 18+ (recommandé: 20 LTS)
-- npm ou yarn
-- Nginx
-- Git
+**URL finale:** https://bible-journey.woutils.com
+**Chemin sur le serveur:** `/opt/apps/bible-journey`
 
 ---
 
-## Option 1: Déploiement Standard (Nginx + fichiers statiques)
+## Déploiement Rapide (Copier-Coller)
 
-### Étape 1: Préparer le VPS
+### Étape 1: Cloner le projet sur le VPS
 
 ```bash
-# Mettre à jour le système
-sudo apt update && sudo apt upgrade -y
+# Créer le dossier
+sudo mkdir -p /opt/apps/bible-journey
+sudo chown $USER:$USER /opt/apps/bible-journey
 
-# Installer Node.js 20 LTS
+# Cloner le repo
+cd /opt/apps/bible-journey
+git clone https://github.com/wilf974/bible-journey.git .
+```
+
+### Étape 2: Configurer le DNS
+
+Ajouter un enregistrement DNS chez votre registrar:
+
+| Type | Nom | Valeur |
+|------|-----|--------|
+| A | bible-journey | IP_DE_VOTRE_VPS |
+
+### Étape 3: Lancer le déploiement
+
+```bash
+cd /opt/apps/bible-journey
+chmod +x deploy.sh
+
+# Déploiement complet (sans SSL)
+./deploy.sh full
+
+# Puis obtenir le certificat SSL
+./deploy.sh ssl
+```
+
+---
+
+## Déploiement Manuel Étape par Étape
+
+### 1. Prérequis
+
+```bash
+# Node.js 20 LTS
 curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash -
 sudo apt install -y nodejs
 
-# Installer Nginx
-sudo apt install -y nginx
-
-# Installer Git
-sudo apt install -y git
-
-# Vérifier les installations
-node -v    # Doit afficher v20.x.x
-npm -v     # Doit afficher 10.x.x
-nginx -v   # Doit afficher nginx/1.x.x
+# Vérifier
+node -v  # v20.x.x
+npm -v   # 10.x.x
 ```
 
-### Étape 2: Cloner le projet
+### 2. Cloner et Build
 
 ```bash
-# Créer le répertoire de déploiement
-sudo mkdir -p /var/www/bible-journey
-sudo chown $USER:$USER /var/www/bible-journey
-
-# Cloner le dépôt
-cd /var/www/bible-journey
-git clone https://github.com/VOTRE_USERNAME/bible-journey.git .
-
-# OU copier les fichiers via SCP depuis votre machine locale:
-# scp -r ./bible-journey/* user@votre-vps:/var/www/bible-journey/
-```
-
-### Étape 3: Configurer l'environnement
-
-```bash
-# Créer le fichier .env pour la production
-cd /var/www/bible-journey
-nano .env
-
-# Ajouter les variables (remplacer par vos valeurs):
-VITE_SUPABASE_PROJECT_ID="votre_project_id"
-VITE_SUPABASE_PUBLISHABLE_KEY="votre_anon_key"
-VITE_SUPABASE_URL="https://votre_project_id.supabase.co"
-```
-
-### Étape 4: Build de l'application
-
-```bash
-cd /var/www/bible-journey
+cd /opt/apps/bible-journey
 
 # Installer les dépendances
 npm ci
 
-# Build pour la production
+# Build production
 npm run build
 
-# Les fichiers seront dans le dossier 'dist'
+# Vérifier que dist/ existe
 ls -la dist/
 ```
 
-### Étape 5: Configurer Nginx
+### 3. Configuration Nginx (sans casser les autres sites)
 
 ```bash
-# Éditer la configuration Nginx
-sudo nano /etc/nginx/sites-available/bible-journey
-```
+# Copier la config spécifique à bible-journey
+sudo cp nginx.conf /etc/nginx/sites-available/bible-journey
 
-Copier cette configuration (adapter le domaine):
-
-```nginx
-server {
-    listen 80;
-    server_name votre-domaine.com www.votre-domaine.com;
-
-    root /var/www/bible-journey/dist;
-    index index.html;
-
-    # Gestion des routes SPA
-    location / {
-        try_files $uri $uri/ /index.html;
-    }
-
-    # Cache des assets
-    location ~* \.(js|css|png|jpg|jpeg|gif|ico|svg|woff|woff2)$ {
-        expires 1y;
-        add_header Cache-Control "public, immutable";
-    }
-
-    # Compression gzip
-    gzip on;
-    gzip_types text/plain text/css application/json application/javascript;
-}
-```
-
-Activer le site:
-
-```bash
-# Créer le lien symbolique
+# Activer le site (crée un lien symbolique)
 sudo ln -s /etc/nginx/sites-available/bible-journey /etc/nginx/sites-enabled/
 
-# Désactiver le site par défaut (optionnel)
-sudo rm /etc/nginx/sites-enabled/default
-
-# Tester la configuration
+# Tester la config (vérifie TOUS les sites)
 sudo nginx -t
 
-# Redémarrer Nginx
+# Si OK, recharger Nginx
 sudo systemctl reload nginx
 ```
 
-### Étape 6: Configurer SSL avec Certbot (HTTPS)
+**Important:** Chaque site a sa propre config dans `sites-available`. Cette config n'affecte que le sous-domaine `bible-journey.woutils.com`.
 
+### 4. Obtenir le certificat SSL
+
+**Méthode 1: Certbot automatique**
 ```bash
-# Installer Certbot
-sudo apt install -y certbot python3-certbot-nginx
-
-# Obtenir le certificat SSL
-sudo certbot --nginx -d votre-domaine.com -d www.votre-domaine.com
-
-# Le renouvellement automatique est configuré automatiquement
-# Vérifier avec:
-sudo certbot renew --dry-run
+sudo certbot --nginx -d bible-journey.woutils.com
 ```
 
-### Étape 7: Configurer le pare-feu
+**Méthode 2: Si vous avez un wildcard existant pour *.woutils.com**
 
-```bash
-# Activer UFW si pas déjà fait
-sudo ufw enable
-
-# Autoriser SSH, HTTP et HTTPS
-sudo ufw allow ssh
-sudo ufw allow 'Nginx Full'
-
-# Vérifier le statut
-sudo ufw status
-```
-
----
-
-## Option 2: Déploiement avec Docker
-
-### Étape 1: Installer Docker
-
-```bash
-# Installer Docker
-curl -fsSL https://get.docker.com -o get-docker.sh
-sudo sh get-docker.sh
-
-# Ajouter votre user au groupe docker
-sudo usermod -aG docker $USER
-
-# Installer Docker Compose
-sudo apt install -y docker-compose-plugin
-
-# Vérifier l'installation
-docker --version
-docker compose version
-```
-
-### Étape 2: Cloner et configurer
-
-```bash
-cd /opt
-sudo mkdir bible-journey && sudo chown $USER:$USER bible-journey
-cd bible-journey
-git clone https://github.com/VOTRE_USERNAME/bible-journey.git .
-```
-
-### Étape 3: Build et démarrer
-
-```bash
-# Build l'image Docker
-docker compose build
-
-# Démarrer le conteneur
-docker compose up -d
-
-# Vérifier que le conteneur tourne
-docker compose ps
-
-# Voir les logs
-docker compose logs -f
-```
-
-L'application sera accessible sur le port 8080.
-
-### Étape 4: Reverse proxy Nginx (pour SSL)
-
-```bash
-# Installer Nginx sur l'hôte
-sudo apt install -y nginx
-
-# Configuration pour proxy vers Docker
-sudo nano /etc/nginx/sites-available/bible-journey
-```
+Modifiez `/etc/nginx/sites-available/bible-journey` pour utiliser le certificat wildcard:
 
 ```nginx
-server {
-    listen 80;
-    server_name votre-domaine.com;
-
-    location / {
-        proxy_pass http://127.0.0.1:8080;
-        proxy_http_version 1.1;
-        proxy_set_header Host $host;
-        proxy_set_header X-Real-IP $remote_addr;
-        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-        proxy_set_header X-Forwarded-Proto $scheme;
-    }
-}
+ssl_certificate /etc/letsencrypt/live/woutils.com/fullchain.pem;
+ssl_certificate_key /etc/letsencrypt/live/woutils.com/privkey.pem;
 ```
 
+### 5. Vérifier
+
 ```bash
-# Activer et configurer SSL
-sudo ln -s /etc/nginx/sites-available/bible-journey /etc/nginx/sites-enabled/
-sudo certbot --nginx -d votre-domaine.com
+# Tester la config
+sudo nginx -t
+
+# Recharger
+sudo systemctl reload nginx
+
+# Tester l'URL
+curl -I https://bible-journey.woutils.com
 ```
 
 ---
 
-## Script de déploiement automatique
-
-Un script `deploy.sh` est inclus pour automatiser le déploiement:
+## Mise à Jour de l'Application
 
 ```bash
-# Rendre le script exécutable
-chmod +x deploy.sh
-
-# Déploiement complet
-./deploy.sh full
-
-# Ou étapes individuelles:
-./deploy.sh deps    # Installer les dépendances
-./deploy.sh build   # Build uniquement
-./deploy.sh deploy  # Déployer et configurer Nginx
-```
-
----
-
-## Mise à jour de l'application
-
-### Option standard (Nginx)
-
-```bash
-cd /var/www/bible-journey
-
-# Récupérer les dernières modifications
-git pull origin main
-
-# Réinstaller les dépendances si nécessaire
-npm ci
-
-# Rebuild
-npm run build
-
-# Les fichiers sont automatiquement servis par Nginx
-```
-
-### Option Docker
-
-```bash
-cd /opt/bible-journey
+cd /opt/apps/bible-journey
 
 # Récupérer les modifications
 git pull origin main
 
-# Rebuild et redémarrer
-docker compose build
-docker compose up -d
+# Rebuild et redéployer (sans toucher à Nginx)
+./deploy.sh update
+```
+
+---
+
+## Structure des fichiers sur le VPS
+
+```
+/opt/apps/bible-journey/
+├── dist/              # Fichiers buildés (servis par Nginx)
+├── src/               # Code source
+├── node_modules/      # Dépendances
+├── nginx.conf         # Config Nginx de référence
+├── deploy.sh          # Script de déploiement
+├── .env               # Variables d'environnement
+└── package.json
+
+/etc/nginx/
+├── sites-available/
+│   ├── bible-journey    # Config pour bible-journey.woutils.com
+│   ├── autre-site       # Vos autres sites (non modifiés)
+│   └── ...
+└── sites-enabled/
+    ├── bible-journey -> ../sites-available/bible-journey
+    ├── autre-site -> ../sites-available/autre-site
+    └── ...
+```
+
+---
+
+## Commandes Utiles
+
+```bash
+# Voir les logs d'accès
+sudo tail -f /var/log/nginx/bible-journey.access.log
+
+# Voir les erreurs
+sudo tail -f /var/log/nginx/bible-journey.error.log
+
+# Recharger Nginx après modification
+sudo nginx -t && sudo systemctl reload nginx
+
+# Voir le statut de Nginx
+sudo systemctl status nginx
+
+# Lister les sites actifs
+ls -la /etc/nginx/sites-enabled/
 ```
 
 ---
 
 ## Dépannage
 
-### L'application affiche une page blanche
+### "nginx: [emerg] could not build server_names_hash"
 
-1. Vérifier les logs du navigateur (F12 > Console)
-2. Vérifier que le fichier `.env` contient les bonnes valeurs Supabase
-3. Rebuild l'application après avoir modifié `.env`
-
-### Erreur 404 sur les routes
-
-Vérifier que la directive `try_files $uri $uri/ /index.html;` est présente dans Nginx.
-
-### Problèmes de connexion Supabase
-
-1. Vérifier que les URLs Supabase sont correctes
-2. Vérifier que le projet Supabase est actif
-3. Vérifier les règles RLS dans Supabase
-
-### Voir les logs
+Nginx a besoin de plus de mémoire pour les noms de domaine:
 
 ```bash
-# Logs Nginx
-sudo tail -f /var/log/nginx/error.log
-sudo tail -f /var/log/nginx/access.log
-
-# Logs Docker
-docker compose logs -f
+sudo nano /etc/nginx/nginx.conf
+# Ajouter dans le bloc http {}:
+server_names_hash_bucket_size 64;
 ```
 
----
+### Certificat SSL non trouvé
 
-## Configuration Supabase
-
-Le projet utilise Supabase comme backend. Assurez-vous que:
-
-1. **Authentification** est activée (Email/Password)
-2. **Row Level Security (RLS)** est activée sur toutes les tables
-3. Les **migrations** ont été appliquées (dossier `supabase/migrations/`)
-
-### Appliquer les migrations
+Si le certificat n'existe pas encore, créez une config temporaire HTTP:
 
 ```bash
-# Installer Supabase CLI
-npm install -g supabase
+# Éditer la config
+sudo nano /etc/nginx/sites-available/bible-journey
 
-# Se connecter
-supabase login
-
-# Lier au projet
-supabase link --project-ref votre_project_id
-
-# Appliquer les migrations
-supabase db push
+# Commenter temporairement les lignes SSL et la redirection HTTPS
+# Puis:
+sudo nginx -t && sudo systemctl reload nginx
+sudo certbot --nginx -d bible-journey.woutils.com
 ```
 
----
+### Les autres sites ne marchent plus
 
-## Variables d'environnement requises
-
-| Variable | Description |
-|----------|-------------|
-| `VITE_SUPABASE_PROJECT_ID` | ID du projet Supabase |
-| `VITE_SUPABASE_PUBLISHABLE_KEY` | Clé publique (anon key) |
-| `VITE_SUPABASE_URL` | URL du projet Supabase |
-
-**Note:** Ces variables sont injectées au moment du build (Vite), pas au runtime.
+1. Vérifiez que vous n'avez pas touché aux autres fichiers dans `sites-available`
+2. Testez avec `sudo nginx -t` pour voir l'erreur exacte
+3. Les logs sont dans `/var/log/nginx/error.log`
 
 ---
 
-## Sécurité
+## Variables d'environnement
 
-1. Ne jamais exposer les clés secrètes (service_role key)
-2. Configurer HTTPS avec Certbot
-3. Activer le pare-feu (UFW)
-4. Mettre à jour régulièrement le système
-5. Configurer des backups automatiques
+Le fichier `.env` contient:
 
----
+```
+VITE_SUPABASE_PROJECT_ID="yetgwtqxhguidhmgjrye"
+VITE_SUPABASE_PUBLISHABLE_KEY="..."
+VITE_SUPABASE_URL="https://yetgwtqxhguidhmgjrye.supabase.co"
+```
 
-## Support
-
-Pour toute question, ouvrez une issue sur le dépôt GitHub.
+**Note:** Ces variables sont injectées au moment du `npm run build`, pas au runtime.
