@@ -1,4 +1,4 @@
-import { Heart, Clock } from "lucide-react";
+import { Heart, Clock, Plus } from "lucide-react";
 import { useState, useEffect } from "react";
 import {
   Tooltip,
@@ -11,6 +11,7 @@ interface LivesIndicatorProps {
   lives: number;
   maxLives: number;
   getTimeUntilNextLife: () => number | null;
+  onShopClick?: () => void;
 }
 
 const formatTime = (ms: number): string => {
@@ -19,7 +20,7 @@ const formatTime = (ms: number): string => {
   return `${minutes}:${seconds.toString().padStart(2, '0')}`;
 };
 
-const LivesIndicator = ({ lives, maxLives, getTimeUntilNextLife }: LivesIndicatorProps) => {
+const LivesIndicator = ({ lives, maxLives, getTimeUntilNextLife, onShopClick }: LivesIndicatorProps) => {
   const [timeLeft, setTimeLeft] = useState<number | null>(null);
 
   useEffect(() => {
@@ -40,7 +41,10 @@ const LivesIndicator = ({ lives, maxLives, getTimeUntilNextLife }: LivesIndicato
     <TooltipProvider>
       <Tooltip>
         <TooltipTrigger asChild>
-          <div className="flex items-center gap-1.5 bg-destructive/10 px-3 py-1.5 rounded-lg cursor-pointer">
+          <button 
+            onClick={onShopClick}
+            className="flex items-center gap-1.5 bg-destructive/10 px-3 py-1.5 rounded-lg hover:bg-destructive/20 transition-colors"
+          >
             <Heart className="w-5 h-5 text-destructive fill-destructive" />
             <span className="font-bold text-destructive">{lives}</span>
             {!isFull && timeLeft !== null && (
@@ -49,13 +53,16 @@ const LivesIndicator = ({ lives, maxLives, getTimeUntilNextLife }: LivesIndicato
                 <span>{formatTime(timeLeft)}</span>
               </div>
             )}
-          </div>
+            {!isFull && (
+              <Plus className="w-4 h-4 text-destructive/60" />
+            )}
+          </button>
         </TooltipTrigger>
         <TooltipContent>
           {isFull ? (
             <p>Vies complètes !</p>
           ) : (
-            <p>Prochaine vie dans {timeLeft ? formatTime(timeLeft) : "..."}</p>
+            <p>Cliquez pour acheter des vies • Prochaine dans {timeLeft ? formatTime(timeLeft) : "..."}</p>
           )}
         </TooltipContent>
       </Tooltip>

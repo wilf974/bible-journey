@@ -96,6 +96,7 @@ export type Database = {
           lives: number
           lives_updated_at: string
           longest_streak: number
+          manna: number
           max_lives: number
           total_lessons_completed: number
           updated_at: string
@@ -113,6 +114,7 @@ export type Database = {
           lives?: number
           lives_updated_at?: string
           longest_streak?: number
+          manna?: number
           max_lives?: number
           total_lessons_completed?: number
           updated_at?: string
@@ -130,6 +132,7 @@ export type Database = {
           lives?: number
           lives_updated_at?: string
           longest_streak?: number
+          manna?: number
           max_lives?: number
           total_lessons_completed?: number
           updated_at?: string
