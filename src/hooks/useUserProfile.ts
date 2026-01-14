@@ -26,13 +26,14 @@ const LIFE_COST = 20; // Manna cost for 1 life
 const REGEN_INTERVAL_MS = 30 * 60 * 1000; // 30 minutes in milliseconds
 
 // Calculate regenerated lives based on time passed
+// Returns the new timestamp adjusted to account for partial regeneration time
 const calculateRegeneratedLives = (
   currentLives: number,
   maxLives: number,
   livesUpdatedAt: string
-): { lives: number; shouldUpdate: boolean } => {
+): { lives: number; shouldUpdate: boolean; newTimestamp: string } => {
   if (currentLives >= maxLives) {
-    return { lives: maxLives, shouldUpdate: false };
+    return { lives: maxLives, shouldUpdate: false, newTimestamp: livesUpdatedAt };
   }
 
   const lastUpdate = new Date(livesUpdatedAt).getTime();
@@ -42,10 +43,21 @@ const calculateRegeneratedLives = (
 
   if (livesToRegen > 0) {
     const newLives = Math.min(maxLives, currentLives + livesToRegen);
-    return { lives: newLives, shouldUpdate: newLives !== currentLives };
+    
+    // Calculate the new timestamp:
+    // Move it forward by the number of lives regenerated * interval
+    // This preserves any partial progress toward the next life
+    const timeConsumed = livesToRegen * REGEN_INTERVAL_MS;
+    const newTimestamp = new Date(lastUpdate + timeConsumed).toISOString();
+    
+    return { 
+      lives: newLives, 
+      shouldUpdate: newLives !== currentLives,
+      newTimestamp 
+    };
   }
 
-  return { lives: currentLives, shouldUpdate: false };
+  return { lives: currentLives, shouldUpdate: false, newTimestamp: livesUpdatedAt };
 };
 
 export const useUserProfile = () => {
@@ -67,7 +79,7 @@ export const useUserProfile = () => {
       
       if (data) {
         // Check if lives need regeneration
-        const { lives: regenLives, shouldUpdate } = calculateRegeneratedLives(
+        const { lives: regenLives, shouldUpdate, newTimestamp } = calculateRegeneratedLives(
           data.lives,
           data.max_lives,
           data.lives_updated_at
@@ -75,15 +87,16 @@ export const useUserProfile = () => {
 
         if (shouldUpdate) {
           // Update the database with regenerated lives
+          // Use calculated timestamp to maintain proper countdown for next life
           await supabase
             .from("profiles")
             .update({ 
               lives: regenLives, 
-              lives_updated_at: new Date().toISOString() 
+              lives_updated_at: newTimestamp
             })
             .eq("user_id", user.id);
           
-          return { ...data, lives: regenLives } as UserProfile;
+          return { ...data, lives: regenLives, lives_updated_at: newTimestamp } as UserProfile;
         }
       }
       
@@ -181,12 +194,20 @@ export const useUserProfile = () => {
       
       const newLives = Math.max(0, Math.min(profile.max_lives, profile.lives + livesChange));
       
+      // Only reset timer if lives are being ADDED (regeneration/purchase)
+      // Keep existing timer when losing lives to continue countdown
+      const updates: { lives: number; lives_updated_at?: string } = { lives: newLives };
+      
+      if (livesChange > 0) {
+        // Lives being added - reset the regeneration timer
+        updates.lives_updated_at = new Date().toISOString();
+      }
+      // When losing lives (livesChange < 0), keep the existing lives_updated_at
+      // so the regeneration timer continues from where it was
+      
       const { error } = await supabase
         .from("profiles")
-        .update({ 
-          lives: newLives,
-          lives_updated_at: new Date().toISOString() // Reset timer when lives change
-        })
+        .update(updates)
         .eq("user_id", user.id);
 
       if (error) throw error;
