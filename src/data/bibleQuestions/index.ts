@@ -6,6 +6,10 @@ export * from './wisdomQuestions';
 export * from './prophetQuestions';
 export * from './gospelQuestions';
 export * from './epistleQuestions';
+export * from './genesisExtendedQuestions';
+export * from './exodusExtendedQuestions';
+export * from './newTestamentExtendedQuestions';
+export * from './oldTestamentExtendedQuestions';
 
 // Combine all questions
 import { genesisQuestions, exodusQuestions, matthewQuestions, johnQuestions } from '../bibleContent';
@@ -15,11 +19,17 @@ import { jobQuestions, psalmsQuestions, proverbsQuestions, ecclesiastesQuestions
 import { isaiahQuestions, jeremiahQuestions, ezekielQuestions, danielQuestions } from './prophetQuestions';
 import { markQuestions, lukeQuestions, actsQuestions } from './gospelQuestions';
 import { romansQuestions, corinthians1Questions, corinthians2Questions, galatiansQuestions, ephesiansQuestions, philippiansQuestions, hebrewsQuestions, jamesQuestions, revelationQuestions } from './epistleQuestions';
+import { genesisExtendedQuestions } from './genesisExtendedQuestions';
+import { exodusExtendedQuestions } from './exodusExtendedQuestions';
+import { newTestamentExtendedQuestions } from './newTestamentExtendedQuestions';
+import { oldTestamentExtendedQuestions } from './oldTestamentExtendedQuestions';
 
 export const completeQuestionBank = [
   // Pentateuque
   ...genesisQuestions,
+  ...genesisExtendedQuestions,
   ...exodusQuestions,
+  ...exodusExtendedQuestions,
   ...leviticusQuestions,
   ...numbersQuestions,
   ...deuteronomyQuestions,
@@ -57,6 +67,9 @@ export const completeQuestionBank = [
   ...hebrewsQuestions,
   ...jamesQuestions,
   ...revelationQuestions,
+  // Questions étendues
+  ...newTestamentExtendedQuestions,
+  ...oldTestamentExtendedQuestions,
 ];
 
 // Get questions by book
@@ -80,4 +93,9 @@ export const getAvailableChapters = (bookId: string): number[] => {
     .filter(q => q.bookId === bookId)
     .map(q => q.chapter);
   return [...new Set(chapters)].sort((a, b) => a - b);
+};
+
+// Get total question count
+export const getTotalQuestionCount = (): number => {
+  return completeQuestionBank.length;
 };
