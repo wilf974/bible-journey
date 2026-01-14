@@ -95,10 +95,11 @@ const BookPage = () => {
               
               // A chapter is unlocked if:
               // 1. It's the first available chapter (index 0)
-              // 2. The previous available chapter has been completed
-              const previousAvailableChapter = chapterIndex > 0 ? availableChapters[chapterIndex - 1] : null;
-              const isPreviousCompleted = previousAvailableChapter ? completedChaptersArray.includes(previousAvailableChapter) : true;
-              const isUnlocked = hasQuestions && (chapterIndex === 0 || isPreviousCompleted);
+              // 2. ALL previous available chapters have been completed (sequential unlock)
+              const allPreviousCompleted = chapterIndex <= 0 
+                ? true 
+                : availableChapters.slice(0, chapterIndex).every(ch => completedChaptersArray.includes(ch));
+              const isUnlocked = hasQuestions && allPreviousCompleted;
               
               const isLocked = !hasQuestions || !isUnlocked;
 
