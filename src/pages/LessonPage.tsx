@@ -17,19 +17,23 @@ const LessonPage = () => {
   const { lessonId } = useParams();
   const { profile, addXP, updateStreak, updateLives } = useUserProfile();
   
-  // Parse lessonId to get bookId and chapter (format: "bookId-chapter" or just "lessonId")
+  // Parse lessonId to get bookId and chapter (format: "bookId-chapter" or "bookId-chapter-intro" etc.)
   const { bookId, chapter } = useMemo(() => {
     if (!lessonId) return { bookId: null, chapter: null };
     
     const parts = lessonId.split("-");
-    if (parts.length >= 2) {
-      const chapterNum = parseInt(parts[parts.length - 1]);
+    
+    // Try to find a chapter number in the parts
+    for (let i = parts.length - 1; i >= 1; i--) {
+      const chapterNum = parseInt(parts[i]);
       if (!isNaN(chapterNum)) {
-        const bookPart = parts.slice(0, -1).join("-");
+        const bookPart = parts.slice(0, i).join("-");
         return { bookId: bookPart, chapter: chapterNum };
       }
     }
-    return { bookId: lessonId, chapter: null };
+    
+    // No chapter found, treat the whole thing as bookId (or first part if contains numeric suffix)
+    return { bookId: parts[0], chapter: null };
   }, [lessonId]);
 
   const { saveProgress } = useBookProgress(bookId || undefined);
