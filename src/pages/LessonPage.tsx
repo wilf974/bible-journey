@@ -1,11 +1,14 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { X, Star, Zap } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import QuizQuestion from "@/components/QuizQuestion";
 import QuizProgress from "@/components/QuizProgress";
+import BlockComplete from "@/components/BlockComplete";
 import { sampleQuestions } from "@/data/bibleContent";
 import { useUserProfile } from "@/hooks/useUserProfile";
+
+const QUESTIONS_PER_BLOCK = 5;
 
 const LessonPage = () => {
   const navigate = useNavigate();
@@ -17,14 +20,34 @@ const LessonPage = () => {
   const [score, setScore] = useState(0);
   const [xpEarned, setXpEarned] = useState(0);
   const [isComplete, setIsComplete] = useState(false);
+  const [showBlockComplete, setShowBlockComplete] = useState(false);
+  const [currentBlock, setCurrentBlock] = useState(0);
+  const [blockScore, setBlockScore] = useState(0);
+  const [blockXp, setBlockXp] = useState(0);
 
   const questions = sampleQuestions;
   const maxLives = profile?.max_lives ?? 5;
+  
+  // Diviser les questions en blocs
+  const questionBlocks = useMemo(() => {
+    const blocks = [];
+    for (let i = 0; i < questions.length; i += QUESTIONS_PER_BLOCK) {
+      blocks.push(questions.slice(i, i + QUESTIONS_PER_BLOCK));
+    }
+    return blocks;
+  }, [questions]);
+
+  const totalBlocks = questionBlocks.length;
+  const currentBlockQuestions = questionBlocks[currentBlock] || [];
+  const questionInBlock = currentQuestion - currentBlock * QUESTIONS_PER_BLOCK;
 
   const handleAnswer = (isCorrect: boolean) => {
     if (isCorrect) {
       setScore((prev) => prev + 1);
-      setXpEarned((prev) => prev + questions[currentQuestion].xpReward);
+      setBlockScore((prev) => prev + 1);
+      const xp = questions[currentQuestion].xpReward;
+      setXpEarned((prev) => prev + xp);
+      setBlockXp((prev) => prev + xp);
     } else {
       setLives((prev) => {
         const newLives = Math.max(0, prev - 1);
@@ -36,16 +59,36 @@ const LessonPage = () => {
   };
 
   const handleNext = () => {
-    if (currentQuestion < questions.length - 1) {
-      setCurrentQuestion((prev) => prev + 1);
+    const isLastQuestionInBlock = questionInBlock >= currentBlockQuestions.length - 1;
+    const isLastBlock = currentBlock >= totalBlocks - 1;
+
+    if (isLastQuestionInBlock) {
+      // Fin du bloc
+      setShowBlockComplete(true);
     } else {
+      // Question suivante dans le même bloc
+      setCurrentQuestion((prev) => prev + 1);
+    }
+  };
+
+  const handleBlockContinue = () => {
+    const isLastBlock = currentBlock >= totalBlocks - 1;
+    
+    if (isLastBlock) {
       setIsComplete(true);
       // Save XP and update streak
       if (xpEarned > 0) {
         addXP.mutate(xpEarned);
       }
       updateStreak.mutate();
+    } else {
+      // Passer au bloc suivant
+      setCurrentBlock((prev) => prev + 1);
+      setCurrentQuestion((prev) => prev + 1);
+      setBlockScore(0);
+      setBlockXp(0);
     }
+    setShowBlockComplete(false);
   };
 
   if (lives === 0) {
@@ -70,8 +113,11 @@ const LessonPage = () => {
               onClick={() => {
                 setLives(profile?.lives ?? 5);
                 setCurrentQuestion(0);
+                setCurrentBlock(0);
                 setScore(0);
+                setBlockScore(0);
                 setXpEarned(0);
+                setBlockXp(0);
               }} 
               className="w-full"
             >
@@ -144,21 +190,49 @@ const LessonPage = () => {
       </header>
 
       <main className="container max-w-2xl mx-auto px-4 py-8">
-        <QuizProgress
-          current={currentQuestion + 1}
-          total={questions.length}
-          lives={lives}
-          maxLives={maxLives}
-        />
+        {showBlockComplete ? (
+          <BlockComplete
+            blockNumber={currentBlock + 1}
+            totalBlocks={totalBlocks}
+            score={blockScore}
+            totalQuestions={currentBlockQuestions.length}
+            xpEarned={blockXp}
+            onContinue={handleBlockContinue}
+          />
+        ) : (
+          <>
+            <QuizProgress
+              current={questionInBlock + 1}
+              total={currentBlockQuestions.length}
+              lives={lives}
+              maxLives={maxLives}
+            />
 
-        <QuizQuestion
-          key={questions[currentQuestion].id}
-          question={questions[currentQuestion].question}
-          verse={questions[currentQuestion].verse}
-          options={questions[currentQuestion].options}
-          onAnswer={handleAnswer}
-          onNext={handleNext}
-        />
+            <div className="flex justify-center gap-2 mb-6">
+              {Array.from({ length: totalBlocks }).map((_, i) => (
+                <div
+                  key={i}
+                  className={`w-2 h-2 rounded-full transition-all ${
+                    i < currentBlock
+                      ? "bg-primary"
+                      : i === currentBlock
+                        ? "bg-primary/50"
+                        : "bg-muted"
+                  }`}
+                />
+              ))}
+            </div>
+
+            <QuizQuestion
+              key={questions[currentQuestion].id}
+              question={questions[currentQuestion].question}
+              verse={questions[currentQuestion].verse}
+              options={questions[currentQuestion].options}
+              onAnswer={handleAnswer}
+              onNext={handleNext}
+            />
+          </>
+        )}
       </main>
     </div>
   );
