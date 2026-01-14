@@ -15,7 +15,7 @@ import { useUserProfile } from "@/hooks/useUserProfile";
 const Dashboard = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
-  const { profile, isLoading } = useUserProfile();
+  const { profile, isLoading, getTimeUntilNextLife } = useUserProfile();
   const [activeTab, setActiveTab] = useState("lessons");
 
   // Use profile data or defaults
@@ -23,6 +23,7 @@ const Dashboard = () => {
     streak: profile?.current_streak ?? 0,
     xp: profile?.current_xp ?? 0,
     lives: profile?.lives ?? 5,
+    maxLives: profile?.max_lives ?? 5,
     level: profile?.current_level ?? 1,
     levelXP: (profile?.current_level ?? 1) * 500,
     todayComplete: profile?.last_activity_date === new Date().toISOString().split('T')[0],
@@ -70,7 +71,9 @@ const Dashboard = () => {
         streak={userStats.streak}
         xp={userStats.xp}
         lives={userStats.lives}
+        maxLives={userStats.maxLives}
         isLoggedIn={true}
+        getTimeUntilNextLife={getTimeUntilNextLife}
       />
 
       <main className="container max-w-4xl mx-auto px-4 py-8">

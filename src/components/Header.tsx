@@ -1,7 +1,8 @@
-import { Flame, Zap, Heart, LogOut, User } from "lucide-react";
+import { Flame, Zap, LogOut, User } from "lucide-react";
 import { Button } from "./ui/button";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
+import LivesIndicator from "./LivesIndicator";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -14,10 +15,19 @@ interface HeaderProps {
   streak: number;
   xp: number;
   lives: number;
+  maxLives?: number;
   isLoggedIn?: boolean;
+  getTimeUntilNextLife?: () => number | null;
 }
 
-const Header = ({ streak, xp, lives, isLoggedIn = false }: HeaderProps) => {
+const Header = ({ 
+  streak, 
+  xp, 
+  lives, 
+  maxLives = 5,
+  isLoggedIn = false,
+  getTimeUntilNextLife = () => null 
+}: HeaderProps) => {
   const { signOut, user } = useAuth();
   const navigate = useNavigate();
 
@@ -53,11 +63,12 @@ const Header = ({ streak, xp, lives, isLoggedIn = false }: HeaderProps) => {
             <span className="font-bold text-secondary">{xp}</span>
           </div>
 
-          {/* Lives */}
-          <div className="flex items-center gap-1.5 bg-destructive/10 px-3 py-1.5 rounded-lg">
-            <Heart className="w-5 h-5 text-destructive fill-destructive" />
-            <span className="font-bold text-destructive">{lives}</span>
-          </div>
+          {/* Lives with regeneration timer */}
+          <LivesIndicator 
+            lives={lives} 
+            maxLives={maxLives}
+            getTimeUntilNextLife={getTimeUntilNextLife}
+          />
 
           {/* Profile */}
           {isLoggedIn ? (
