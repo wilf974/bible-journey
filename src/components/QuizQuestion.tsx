@@ -2,6 +2,8 @@ import { useState } from "react";
 import { cn } from "@/lib/utils";
 import { Button } from "./ui/button";
 import { Check, X, ArrowRight } from "lucide-react";
+import HintButton from "./HintButton";
+import ExplanationCard from "./ExplanationCard";
 
 interface QuizOption {
   id: string;
@@ -13,13 +15,28 @@ interface QuizQuestionProps {
   question: string;
   verse?: string;
   options: QuizOption[];
+  explanation?: string;
+  verseReference?: string;
   onAnswer: (isCorrect: boolean) => void;
   onNext: () => void;
+  manna?: number;
+  showHint?: boolean;
 }
 
-const QuizQuestion = ({ question, verse, options, onAnswer, onNext }: QuizQuestionProps) => {
+const QuizQuestion = ({ 
+  question, 
+  verse, 
+  options, 
+  explanation,
+  verseReference,
+  onAnswer, 
+  onNext,
+  manna = 0,
+  showHint = true,
+}: QuizQuestionProps) => {
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [hasAnswered, setHasAnswered] = useState(false);
+  const [eliminatedIds, setEliminatedIds] = useState<string[]>([]);
 
   const handleSelect = (option: QuizOption) => {
     if (hasAnswered) return;
@@ -29,7 +46,17 @@ const QuizQuestion = ({ question, verse, options, onAnswer, onNext }: QuizQuesti
     onAnswer(option.isCorrect);
   };
 
+  const handleUseHint = (toEliminate: string[]) => {
+    setEliminatedIds(toEliminate);
+  };
+
   const getOptionStyles = (option: QuizOption) => {
+    const isEliminated = eliminatedIds.includes(option.id);
+    
+    if (isEliminated && !hasAnswered) {
+      return "border-muted bg-muted/50 opacity-40 line-through pointer-events-none";
+    }
+
     if (!hasAnswered) {
       return selectedId === option.id
         ? "border-primary bg-primary/5"
@@ -47,10 +74,12 @@ const QuizQuestion = ({ question, verse, options, onAnswer, onNext }: QuizQuesti
     return "border-border opacity-50";
   };
 
+  const isCorrectAnswer = options.find(o => o.id === selectedId)?.isCorrect ?? false;
+
   return (
     <div className="animate-slide-in">
       {/* Question */}
-      <div className="text-center mb-8">
+      <div className="text-center mb-6">
         <h2 className="text-2xl font-display font-bold text-foreground mb-4">
           {question}
         </h2>
@@ -61,13 +90,25 @@ const QuizQuestion = ({ question, verse, options, onAnswer, onNext }: QuizQuesti
         )}
       </div>
 
+      {/* Hint button */}
+      {showHint && !hasAnswered && (
+        <div className="flex justify-center mb-4">
+          <HintButton 
+            options={options} 
+            onUseHint={handleUseHint} 
+            disabled={hasAnswered}
+            manna={manna}
+          />
+        </div>
+      )}
+
       {/* Options */}
-      <div className="space-y-3 mb-8">
+      <div className="space-y-3 mb-6">
         {options.map((option) => (
           <button
             key={option.id}
             onClick={() => handleSelect(option)}
-            disabled={hasAnswered}
+            disabled={hasAnswered || eliminatedIds.includes(option.id)}
             className={cn(
               "w-full p-4 rounded-xl border-2 text-left transition-all duration-300",
               "flex items-center justify-between",
@@ -91,16 +132,22 @@ const QuizQuestion = ({ question, verse, options, onAnswer, onNext }: QuizQuesti
         ))}
       </div>
 
+      {/* Explanation */}
+      {hasAnswered && explanation && (
+        <ExplanationCard
+          explanation={explanation}
+          verseReference={verseReference}
+          isCorrect={isCorrectAnswer}
+          className="mb-6"
+        />
+      )}
+
       {/* Next button */}
       {hasAnswered && (
         <Button
           onClick={onNext}
           className="w-full"
-          variant={
-            options.find((o) => o.id === selectedId)?.isCorrect
-              ? "success"
-              : "default"
-          }
+          variant={isCorrectAnswer ? "success" : "default"}
           size="lg"
         >
           Continuer
