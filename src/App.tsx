@@ -8,6 +8,7 @@ import ProtectedRoute from "@/components/ProtectedRoute";
 import Index from "./pages/Index";
 import Dashboard from "./pages/Dashboard";
 import LessonPage from "./pages/LessonPage";
+import BookPage from "./pages/BookPage";
 import AuthPage from "./pages/AuthPage";
 import NotFound from "./pages/NotFound";
 
@@ -35,6 +36,14 @@ const App = () => (
               element={
                 <ProtectedRoute>
                   <LessonPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/book/:bookId"
+              element={
+                <ProtectedRoute>
+                  <BookPage />
                 </ProtectedRoute>
               }
             />
