@@ -35,6 +35,7 @@ const Dashboard = () => {
     xp: profile?.current_xp ?? 0,
     lives: profile?.lives ?? 5,
     maxLives: profile?.max_lives ?? 5,
+    manna: profile?.manna ?? 0,
     level: profile?.current_level ?? 1,
     levelXP: (profile?.current_level ?? 1) * 500,
     todayComplete: profile?.last_activity_date === new Date().toISOString().split('T')[0],
@@ -83,6 +84,7 @@ const Dashboard = () => {
         xp={userStats.xp}
         lives={userStats.lives}
         maxLives={userStats.maxLives}
+        manna={userStats.manna}
         isLoggedIn={true}
         getTimeUntilNextLife={getTimeUntilNextLife}
       />

@@ -16,9 +16,12 @@ interface UserProfile {
   lives: number;
   max_lives: number;
   lives_updated_at: string;
+  manna: number;
   created_at: string;
   updated_at: string;
 }
+
+const LIFE_COST = 20; // Manna cost for 1 life
 
 const REGEN_INTERVAL_MS = 30 * 60 * 1000; // 30 minutes in milliseconds
 
@@ -193,6 +196,44 @@ export const useUserProfile = () => {
     },
   });
 
+  const buyLife = useMutation({
+    mutationFn: async () => {
+      if (!user?.id || !profile) throw new Error("No user or profile");
+      if (profile.manna < LIFE_COST) throw new Error("Not enough manna");
+      if (profile.lives >= profile.max_lives) throw new Error("Lives already full");
+      
+      const { error } = await supabase
+        .from("profiles")
+        .update({ 
+          lives: profile.lives + 1,
+          manna: profile.manna - LIFE_COST,
+          lives_updated_at: new Date().toISOString()
+        })
+        .eq("user_id", user.id);
+
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["profile", user?.id] });
+    },
+  });
+
+  const addManna = useMutation({
+    mutationFn: async (mannaAmount: number) => {
+      if (!user?.id || !profile) throw new Error("No user or profile");
+      
+      const { error } = await supabase
+        .from("profiles")
+        .update({ manna: profile.manna + mannaAmount })
+        .eq("user_id", user.id);
+
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["profile", user?.id] });
+    },
+  });
+
   // Helper to get time until next life regeneration
   const getTimeUntilNextLife = (): number | null => {
     if (!profile || profile.lives >= profile.max_lives) return null;
@@ -211,8 +252,10 @@ export const useUserProfile = () => {
     error,
     updateProfile,
     addXP,
+    addManna,
     updateStreak,
     updateLives,
+    buyLife,
     getTimeUntilNextLife,
   };
 };

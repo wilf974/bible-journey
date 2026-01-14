@@ -15,7 +15,7 @@ const QUESTIONS_PER_BLOCK = 5;
 const LessonPage = () => {
   const navigate = useNavigate();
   const { lessonId } = useParams();
-  const { profile, addXP, updateStreak, updateLives } = useUserProfile();
+  const { profile, addXP, addManna, updateStreak, updateLives } = useUserProfile();
   
   // Parse lessonId to get bookId and chapter (format: "bookId-chapter" or "bookId-chapter-intro" etc.)
   const { bookId, chapter } = useMemo(() => {
@@ -113,6 +113,10 @@ const LessonPage = () => {
       if (xpEarned > 0) {
         addXP.mutate(xpEarned);
       }
+      
+      // Award manna for completing the lesson (5 manna per lesson)
+      addManna.mutate(5);
+      
       updateStreak.mutate();
       
       // Save progress to database
@@ -213,21 +217,26 @@ const LessonPage = () => {
           </p>
 
           {/* Stats */}
-          <div className="grid grid-cols-3 gap-4 mb-8">
-            <div className="bg-muted rounded-xl p-4">
-              <Star className="w-6 h-6 text-primary mx-auto mb-2" />
-              <p className="text-2xl font-bold text-foreground">{percentage}%</p>
+          <div className="grid grid-cols-4 gap-3 mb-8">
+            <div className="bg-muted rounded-xl p-3">
+              <Star className="w-5 h-5 text-primary mx-auto mb-1" />
+              <p className="text-xl font-bold text-foreground">{percentage}%</p>
               <p className="text-xs text-muted-foreground">Précision</p>
             </div>
-            <div className="bg-muted rounded-xl p-4">
-              <Zap className="w-6 h-6 text-primary mx-auto mb-2" />
-              <p className="text-2xl font-bold text-foreground">+{xpEarned}</p>
-              <p className="text-xs text-muted-foreground">XP gagnés</p>
+            <div className="bg-muted rounded-xl p-3">
+              <Zap className="w-5 h-5 text-primary mx-auto mb-1" />
+              <p className="text-xl font-bold text-foreground">+{xpEarned}</p>
+              <p className="text-xs text-muted-foreground">XP</p>
             </div>
-            <div className="bg-muted rounded-xl p-4">
-              <span className="text-2xl block mb-1">🎯</span>
-              <p className="text-2xl font-bold text-foreground">{score}/{questions.length}</p>
-              <p className="text-xs text-muted-foreground">Réponses</p>
+            <div className="bg-amber-500/10 rounded-xl p-3">
+              <span className="text-xl block">🍞</span>
+              <p className="text-xl font-bold text-amber-600">+5</p>
+              <p className="text-xs text-muted-foreground">Manne</p>
+            </div>
+            <div className="bg-muted rounded-xl p-3">
+              <span className="text-xl block">🎯</span>
+              <p className="text-xl font-bold text-foreground">{score}/{questions.length}</p>
+              <p className="text-xs text-muted-foreground">Score</p>
             </div>
           </div>
 
