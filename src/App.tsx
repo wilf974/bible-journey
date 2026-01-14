@@ -10,6 +10,8 @@ import Dashboard from "./pages/Dashboard";
 import LessonPage from "./pages/LessonPage";
 import BookPage from "./pages/BookPage";
 import VerseLearningPage from "./pages/VerseLearningPage";
+import StatsPage from "./pages/StatsPage";
+import ReviewPage from "./pages/ReviewPage";
 import AuthPage from "./pages/AuthPage";
 import NotFound from "./pages/NotFound";
 
@@ -53,6 +55,22 @@ const App = () => (
               element={
                 <ProtectedRoute>
                   <VerseLearningPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/stats"
+              element={
+                <ProtectedRoute>
+                  <StatsPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/review"
+              element={
+                <ProtectedRoute>
+                  <ReviewPage />
                 </ProtectedRoute>
               }
             />

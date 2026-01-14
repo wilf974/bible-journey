@@ -1,10 +1,13 @@
-import { useState, useMemo, useCallback } from "react";
+import { useState, useMemo, useCallback, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { X, Check, ArrowRight, RotateCcw, Lightbulb } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { getVerseById } from "@/data/versesContent";
 import { useUserProfile } from "@/hooks/useUserProfile";
+import { useVerseProgress } from "@/hooks/useVerseProgress";
+import { useLearningStats } from "@/hooks/useLearningStats";
+import AudioButton from "@/components/AudioButton";
 import { cn } from "@/lib/utils";
 
 type ExerciseType = "reveal" | "fillBlank" | "reorder" | "typing";
@@ -18,13 +21,17 @@ const VerseLearningPage = () => {
   const navigate = useNavigate();
   const { verseId } = useParams();
   const { profile, addXP, updateLives } = useUserProfile();
+  const { updateVerseProgress } = useVerseProgress();
+  const { updateStats } = useLearningStats();
 
   const verse = verseId ? getVerseById(verseId) : null;
 
   const [currentExercise, setCurrentExercise] = useState(0);
   const [lives, setLives] = useState(profile?.lives ?? 5);
   const [xpEarned, setXpEarned] = useState(0);
+  const [correctCount, setCorrectCount] = useState(0);
   const [isComplete, setIsComplete] = useState(false);
+  const [startTime] = useState(() => Date.now());
   const [showHint, setShowHint] = useState(false);
 
   // Exercise-specific states
@@ -137,6 +144,7 @@ const VerseLearningPage = () => {
 
     if (correct) {
       setXpEarned(prev => prev + 15);
+      setCorrectCount(prev => prev + 1);
     } else {
       setLives(prev => {
         const newLives = Math.max(0, prev - 1);
@@ -146,9 +154,30 @@ const VerseLearningPage = () => {
     }
   }, [exercises, currentExercise, selectedBlanks, blanksData.hiddenWords, reorderedWords, words, typedText, verse, updateLives]);
 
-  const handleNext = () => {
+  const handleNext = async () => {
     if (currentExercise >= exercises.length - 1) {
       setIsComplete(true);
+      
+      // Calculate time spent
+      const timeSpentMinutes = Math.round((Date.now() - startTime) / 60000);
+      
+      // Update verse progress with spaced repetition
+      const wasSuccessful = correctCount >= exercises.length / 2;
+      await updateVerseProgress.mutateAsync({
+        verseId: verseId!,
+        wasCorrect: wasSuccessful,
+        quality: wasSuccessful ? 4 : 2,
+      });
+
+      // Update learning stats
+      await updateStats.mutateAsync({
+        versesPracticed: 1,
+        xpEarned,
+        timeSpentMinutes,
+        correctAnswers: correctCount,
+        totalAnswers: exercises.length,
+      });
+
       if (xpEarned > 0) {
         addXP.mutate(xpEarned);
       }
@@ -263,9 +292,12 @@ const VerseLearningPage = () => {
       <main className="container max-w-2xl mx-auto px-4 py-8">
         {/* Reference */}
         <div className="text-center mb-6">
-          <span className="inline-block px-3 py-1 bg-primary/10 text-primary rounded-full text-sm font-medium mb-2">
-            {verse.reference}
-          </span>
+          <div className="flex items-center justify-center gap-2 mb-2">
+            <span className="inline-block px-3 py-1 bg-primary/10 text-primary rounded-full text-sm font-medium">
+              {verse.reference}
+            </span>
+            <AudioButton text={verse.text} />
+          </div>
           <h2 className="text-lg font-display font-bold text-foreground">
             {currentEx.instruction}
           </h2>

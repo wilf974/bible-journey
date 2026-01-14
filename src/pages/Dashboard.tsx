@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { BookOpen, Star, Target, Trophy, ChevronRight, ScrollText } from "lucide-react";
+import { BookOpen, Star, Target, Trophy, ChevronRight, ScrollText, TrendingUp, Brain } from "lucide-react";
 import Header from "@/components/Header";
 import StreakCard from "@/components/StreakCard";
 import XPProgress from "@/components/XPProgress";
@@ -13,12 +13,18 @@ import { bibleVerses, versesCategories } from "@/data/versesContent";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { useUserProfile } from "@/hooks/useUserProfile";
+import { useVerseProgress } from "@/hooks/useVerseProgress";
+import { useLearningStats } from "@/hooks/useLearningStats";
 
 const Dashboard = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
   const { profile, isLoading, getTimeUntilNextLife } = useUserProfile();
+  const { verseProgress, getVersesToReview } = useVerseProgress();
+  const { todayStats } = useLearningStats();
   const [activeTab, setActiveTab] = useState("lessons");
+
+  const versesToReview = getVersesToReview();
 
   // Use profile data or defaults
   const userStats = {
@@ -101,6 +107,40 @@ const Dashboard = () => {
             levelXP={userStats.levelXP}
             level={userStats.level}
           />
+        </div>
+
+        {/* Quick actions */}
+        <div className="grid md:grid-cols-2 gap-4 mb-8">
+          {versesToReview.length > 0 && (
+            <Button
+              variant="outline"
+              className="h-auto py-4 px-6 justify-start gap-4 border-primary/30 hover:bg-primary/5"
+              onClick={() => navigate("/review")}
+            >
+              <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center">
+                <Brain className="w-6 h-6 text-primary" />
+              </div>
+              <div className="text-left">
+                <p className="font-bold">{versesToReview.length} verset{versesToReview.length > 1 ? "s" : ""} à réviser</p>
+                <p className="text-sm text-muted-foreground">Révision espacée</p>
+              </div>
+            </Button>
+          )}
+          <Button
+            variant="outline"
+            className="h-auto py-4 px-6 justify-start gap-4 border-secondary/30 hover:bg-secondary/5"
+            onClick={() => navigate("/stats")}
+          >
+            <div className="w-12 h-12 rounded-xl bg-secondary/10 flex items-center justify-center">
+              <TrendingUp className="w-6 h-6 text-secondary" />
+            </div>
+            <div className="text-left">
+              <p className="font-bold">Voir mes statistiques</p>
+              <p className="text-sm text-muted-foreground">
+                {todayStats?.xp_earned ? `+${todayStats.xp_earned} XP aujourd'hui` : "Progression détaillée"}
+              </p>
+            </div>
+          </Button>
         </div>
 
         {/* Continue learning */}
@@ -213,6 +253,7 @@ const Dashboard = () => {
                 <div className="space-y-3">
                   {bibleVerses.slice(0, 5).map((verse, index) => {
                     const category = versesCategories.find(c => c.id === verse.category);
+                    const progress = verseProgress.find(vp => vp.verse_id === verse.id);
                     return (
                       <VerseCard
                         key={verse.id}
@@ -222,7 +263,8 @@ const Dashboard = () => {
                         categoryIcon={category?.icon || "📖"}
                         difficulty={verse.difficulty}
                         isLocked={index > 2}
-                        masteryLevel={index === 0 ? 3 : 0}
+                        isCompleted={progress?.mastery_level ? progress.mastery_level >= 4 : false}
+                        masteryLevel={progress?.mastery_level || 0}
                         onClick={() => navigate(`/verse/${verse.id}`)}
                       />
                     );
