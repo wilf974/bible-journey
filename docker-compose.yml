@@ -1,0 +1,30 @@
+version: '3.8'
+
+services:
+  bible-journey:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: bible-journey
+    restart: unless-stopped
+    ports:
+      - "8080:80"
+    environment:
+      - NODE_ENV=production
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.bible-journey.rule=Host(`votre-domaine.com`)"
+      - "traefik.http.routers.bible-journey.entrypoints=websecure"
+      - "traefik.http.routers.bible-journey.tls.certresolver=letsencrypt"
+
+# Optionnel: Utilisation avec Traefik pour SSL automatique
+# networks:
+#   default:
+#     external:
+#       name: traefik-network

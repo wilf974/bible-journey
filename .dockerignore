@@ -1,0 +1,36 @@
+# Dépendances
+node_modules
+npm-debug.log*
+
+# Build output (sera recréé)
+dist
+
+# Git
+.git
+.gitignore
+
+# IDE
+.vscode
+.idea
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Environment (ne pas inclure les secrets dans l'image)
+.env.local
+.env.*.local
+
+# Documentation
+*.md
+!README.md
+
+# Tests
+coverage
+*.test.ts
+*.spec.ts
+
+# Divers
+*.log
