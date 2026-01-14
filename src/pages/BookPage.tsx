@@ -84,61 +84,65 @@ const BookPage = () => {
         {/* Chapters Grid */}
         <div className="mb-6">
           <h3 className="text-lg font-display font-bold mb-4">Chapitres</h3>
-          <div className="grid grid-cols-5 sm:grid-cols-8 md:grid-cols-10 gap-2">
-            {Array.from({ length: book.chaptersCount }, (_, i) => i + 1).map((chapter) => {
-              const hasQuestions = availableChapters.includes(chapter);
-              const isCompleted = completedChaptersArray.includes(chapter);
-              const chapterQuestions = bookId ? getQuestionsByBookChapter(bookId, chapter) : [];
-              
-              // Find the index in available chapters
-              const chapterIndex = availableChapters.indexOf(chapter);
-              
-              // A chapter is unlocked if:
-              // 1. It's the first available chapter (index 0)
-              // 2. ALL previous available chapters have been completed (sequential unlock)
-              const allPreviousCompleted = chapterIndex <= 0 
-                ? true 
-                : availableChapters.slice(0, chapterIndex).every(ch => completedChaptersArray.includes(ch));
-              const isUnlocked = hasQuestions && allPreviousCompleted;
-              
-              const isLocked = !hasQuestions || !isUnlocked;
+          
+          {/* Find the first non-completed available chapter - only this one should be unlocked */}
+          {(() => {
+            const firstUncompletedIndex = availableChapters.findIndex(
+              ch => !completedChaptersArray.includes(ch)
+            );
+            const nextUnlockedChapter = firstUncompletedIndex >= 0 
+              ? availableChapters[firstUncompletedIndex] 
+              : null;
 
-              return (
-                <button
-                  key={chapter}
-                  onClick={() => !isLocked && navigate(`/lesson/${bookId}-${chapter}`)}
-                  disabled={isLocked}
-                  title={
-                    isCompleted 
-                      ? `Chapitre ${chapter} - Terminé !` 
-                      : isLocked && hasQuestions
-                        ? `Chapitre ${chapter} - Terminez le chapitre précédent d'abord`
-                        : hasQuestions 
-                          ? `Chapitre ${chapter} - ${chapterQuestions.length} questions` 
-                          : `Chapitre ${chapter} - Bientôt disponible`
-                  }
-                  className={`
-                    aspect-square rounded-xl flex items-center justify-center font-bold text-lg
-                    transition-all duration-200
-                    ${isCompleted 
-                      ? "bg-green-500 text-white shadow-md" 
-                      : !isLocked
-                        ? "bg-primary text-primary-foreground hover:opacity-90 shadow-button hover:scale-105" 
-                        : "bg-muted text-muted-foreground cursor-not-allowed"
-                    }
-                  `}
-                >
-                  {isCompleted ? (
-                    <CheckCircle className="w-5 h-5" />
-                  ) : isLocked ? (
-                    <Lock className="w-4 h-4" />
-                  ) : (
-                    chapter
-                  )}
-                </button>
-              );
-            })}
-          </div>
+            return (
+              <div className="grid grid-cols-5 sm:grid-cols-8 md:grid-cols-10 gap-2">
+                {Array.from({ length: book.chaptersCount }, (_, i) => i + 1).map((chapter) => {
+                  const hasQuestions = availableChapters.includes(chapter);
+                  const isCompleted = completedChaptersArray.includes(chapter);
+                  const chapterQuestions = bookId ? getQuestionsByBookChapter(bookId, chapter) : [];
+                  
+                  // A chapter is unlocked ONLY if it's the next one to complete
+                  const isUnlocked = hasQuestions && chapter === nextUnlockedChapter;
+                  const isLocked = !hasQuestions || (!isCompleted && !isUnlocked);
+
+                  return (
+                    <button
+                      key={chapter}
+                      onClick={() => !isLocked && navigate(`/lesson/${bookId}-${chapter}`)}
+                      disabled={isLocked}
+                      title={
+                        isCompleted 
+                          ? `Chapitre ${chapter} - Terminé !` 
+                          : isLocked && hasQuestions
+                            ? `Chapitre ${chapter} - Terminez les chapitres précédents`
+                            : hasQuestions 
+                              ? `Chapitre ${chapter} - ${chapterQuestions.length} questions` 
+                              : `Chapitre ${chapter} - Bientôt disponible`
+                      }
+                      className={`
+                        aspect-square rounded-xl flex items-center justify-center font-bold text-lg
+                        transition-all duration-200
+                        ${isCompleted 
+                          ? "bg-green-500 text-white shadow-md" 
+                          : isUnlocked
+                            ? "bg-primary text-primary-foreground hover:opacity-90 shadow-button hover:scale-105" 
+                            : "bg-muted text-muted-foreground cursor-not-allowed"
+                        }
+                      `}
+                    >
+                      {isCompleted ? (
+                        <CheckCircle className="w-5 h-5" />
+                      ) : isLocked ? (
+                        <Lock className="w-4 h-4" />
+                      ) : (
+                        chapter
+                      )}
+                    </button>
+                  );
+                })}
+              </div>
+            );
+          })()}
         </div>
 
         {/* Start Learning Button */}
