@@ -85,14 +85,14 @@ const BookPage = () => {
         <div className="mb-6">
           <h3 className="text-lg font-display font-bold mb-4">Chapitres</h3>
           
-          {/* Find the first non-completed available chapter - only this one should be unlocked */}
+          {/* Sequential unlock: next chapter is the one after the highest completed chapter */}
           {(() => {
-            const firstUncompletedIndex = availableChapters.findIndex(
-              ch => !completedChaptersArray.includes(ch)
-            );
-            const nextUnlockedChapter = firstUncompletedIndex >= 0 
-              ? availableChapters[firstUncompletedIndex] 
-              : null;
+            // Find the highest completed chapter number
+            const highestCompleted = completedChaptersArray.length > 0 
+              ? Math.max(...completedChaptersArray) 
+              : 0;
+            // Next unlocked chapter is simply highestCompleted + 1
+            const nextSequentialChapter = highestCompleted + 1;
 
             return (
               <div className="grid grid-cols-5 sm:grid-cols-8 md:grid-cols-10 gap-2">
@@ -101,41 +101,47 @@ const BookPage = () => {
                   const isCompleted = completedChaptersArray.includes(chapter);
                   const chapterQuestions = bookId ? getQuestionsByBookChapter(bookId, chapter) : [];
                   
-                  // A chapter is unlocked ONLY if it's the next one to complete
-                  const isUnlocked = hasQuestions && chapter === nextUnlockedChapter;
-                  const isLocked = !hasQuestions || (!isCompleted && !isUnlocked);
+                  // A chapter is unlocked if it's the next sequential chapter (whether it has questions or not)
+                  const isNextToUnlock = chapter === nextSequentialChapter;
+                  // Can play if: has questions AND (is completed OR is next to unlock)
+                  const canPlay = hasQuestions && (isCompleted || isNextToUnlock);
+                  const isLocked = !isCompleted && !isNextToUnlock;
 
                   return (
                     <button
                       key={chapter}
-                      onClick={() => !isLocked && navigate(`/lesson/${bookId}-${chapter}`)}
-                      disabled={isLocked}
+                      onClick={() => canPlay && navigate(`/lesson/${bookId}-${chapter}`)}
+                      disabled={!canPlay && !isCompleted}
                       title={
                         isCompleted 
                           ? `Chapitre ${chapter} - Terminé !` 
-                          : isLocked && hasQuestions
+                          : isNextToUnlock && !hasQuestions
+                            ? `Chapitre ${chapter} - Questions bientôt disponibles`
+                          : isNextToUnlock && hasQuestions
+                            ? `Chapitre ${chapter} - ${chapterQuestions.length} questions` 
+                          : hasQuestions
                             ? `Chapitre ${chapter} - Terminez les chapitres précédents`
-                            : hasQuestions 
-                              ? `Chapitre ${chapter} - ${chapterQuestions.length} questions` 
-                              : `Chapitre ${chapter} - Bientôt disponible`
+                            : `Chapitre ${chapter} - Bientôt disponible`
                       }
                       className={`
                         aspect-square rounded-xl flex items-center justify-center font-bold text-lg
                         transition-all duration-200
                         ${isCompleted 
                           ? "bg-green-500 text-white shadow-md" 
-                          : isUnlocked
-                            ? "bg-primary text-primary-foreground hover:opacity-90 shadow-button hover:scale-105" 
+                          : isNextToUnlock
+                            ? hasQuestions
+                              ? "bg-primary text-primary-foreground hover:opacity-90 shadow-button hover:scale-105"
+                              : "bg-amber-400 text-amber-900 cursor-not-allowed"
                             : "bg-muted text-muted-foreground cursor-not-allowed"
                         }
                       `}
                     >
                       {isCompleted ? (
                         <CheckCircle className="w-5 h-5" />
-                      ) : isLocked ? (
-                        <Lock className="w-4 h-4" />
+                      ) : isNextToUnlock ? (
+                        hasQuestions ? chapter : <Lock className="w-4 h-4" />
                       ) : (
-                        chapter
+                        <Lock className="w-4 h-4" />
                       )}
                     </button>
                   );
