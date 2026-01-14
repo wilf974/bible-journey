@@ -24,9 +24,42 @@ const ChallengePage = () => {
   const [hasAnswered, setHasAnswered] = useState(false);
   const [showResults, setShowResults] = useState(false);
 
-  // Get random questions for the challenge
+  // Get deterministic random questions based on challengeId
+  // This ensures both players get the SAME questions in the SAME order
   const questions = useMemo(() => {
-    const shuffled = [...completeQuestionBank].sort(() => Math.random() - 0.5);
+    if (!challengeId) return [];
+    
+    // Seeded random number generator for deterministic shuffle
+    const seededRandom = (seed: string) => {
+      let hash = 0;
+      for (let i = 0; i < seed.length; i++) {
+        const char = seed.charCodeAt(i);
+        hash = ((hash << 5) - hash) + char;
+        hash = hash & hash;
+      }
+      
+      // LCG parameters
+      const a = 1664525;
+      const c = 1013904223;
+      const m = Math.pow(2, 32);
+      let state = Math.abs(hash);
+      
+      return () => {
+        state = (a * state + c) % m;
+        return state / m;
+      };
+    };
+    
+    const rng = seededRandom(challengeId);
+    
+    // Fisher-Yates shuffle with seeded RNG
+    const shuffled = [...completeQuestionBank];
+    for (let i = shuffled.length - 1; i > 0; i--) {
+      const j = Math.floor(rng() * (i + 1));
+      [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+    }
+    
+    // Take 5 unique questions
     return shuffled.slice(0, 5);
   }, [challengeId]);
 
