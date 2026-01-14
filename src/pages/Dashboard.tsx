@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { BookOpen, Star, Target, Trophy, ChevronRight, ScrollText, TrendingUp, Brain } from "lucide-react";
+import { BookOpen, Star, Target, Trophy, ChevronRight, ScrollText, TrendingUp, Brain, Award } from "lucide-react";
 import Header from "@/components/Header";
 import StreakCard from "@/components/StreakCard";
 import XPProgress from "@/components/XPProgress";
@@ -15,6 +15,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useUserProfile } from "@/hooks/useUserProfile";
 import { useVerseProgress } from "@/hooks/useVerseProgress";
 import { useLearningStats } from "@/hooks/useLearningStats";
+import { useAchievements } from "@/hooks/useAchievements";
 
 const Dashboard = () => {
   const navigate = useNavigate();
@@ -22,9 +23,11 @@ const Dashboard = () => {
   const { profile, isLoading, getTimeUntilNextLife } = useUserProfile();
   const { verseProgress, getVersesToReview } = useVerseProgress();
   const { todayStats } = useLearningStats();
+  const { achievements } = useAchievements();
   const [activeTab, setActiveTab] = useState("lessons");
 
   const versesToReview = getVersesToReview();
+  const unlockedBadges = achievements.filter((a) => a.unlocked).length;
 
   // Use profile data or defaults
   const userStats = {
@@ -138,6 +141,21 @@ const Dashboard = () => {
               <p className="font-bold">Voir mes statistiques</p>
               <p className="text-sm text-muted-foreground">
                 {todayStats?.xp_earned ? `+${todayStats.xp_earned} XP aujourd'hui` : "Progression détaillée"}
+              </p>
+            </div>
+          </Button>
+          <Button
+            variant="outline"
+            className="h-auto py-4 px-6 justify-start gap-4 border-amber-500/30 hover:bg-amber-500/5"
+            onClick={() => navigate("/achievements")}
+          >
+            <div className="w-12 h-12 rounded-xl bg-amber-500/10 flex items-center justify-center">
+              <Award className="w-6 h-6 text-amber-500" />
+            </div>
+            <div className="text-left">
+              <p className="font-bold">Mes badges</p>
+              <p className="text-sm text-muted-foreground">
+                {unlockedBadges} badge{unlockedBadges > 1 ? "s" : ""} débloqué{unlockedBadges > 1 ? "s" : ""}
               </p>
             </div>
           </Button>
@@ -270,7 +288,7 @@ const Dashboard = () => {
                     );
                   })}
                 </div>
-                <Button variant="ghost" className="w-full mt-2">
+                <Button variant="ghost" className="w-full mt-2" onClick={() => navigate("/verses")}>
                   Voir tous les versets
                   <ChevronRight className="w-4 h-4 ml-1" />
                 </Button>

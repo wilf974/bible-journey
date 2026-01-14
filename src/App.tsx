@@ -12,6 +12,8 @@ import BookPage from "./pages/BookPage";
 import VerseLearningPage from "./pages/VerseLearningPage";
 import StatsPage from "./pages/StatsPage";
 import ReviewPage from "./pages/ReviewPage";
+import AchievementsPage from "./pages/AchievementsPage";
+import VersesPage from "./pages/VersesPage";
 import AuthPage from "./pages/AuthPage";
 import NotFound from "./pages/NotFound";
 
@@ -71,6 +73,22 @@ const App = () => (
               element={
                 <ProtectedRoute>
                   <ReviewPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/achievements"
+              element={
+                <ProtectedRoute>
+                  <AchievementsPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/verses"
+              element={
+                <ProtectedRoute>
+                  <VersesPage />
                 </ProtectedRoute>
               }
             />
