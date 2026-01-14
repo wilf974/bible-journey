@@ -15,9 +15,35 @@ interface UserProfile {
   last_activity_date: string | null;
   lives: number;
   max_lives: number;
+  lives_updated_at: string;
   created_at: string;
   updated_at: string;
 }
+
+const REGEN_INTERVAL_MS = 30 * 60 * 1000; // 30 minutes in milliseconds
+
+// Calculate regenerated lives based on time passed
+const calculateRegeneratedLives = (
+  currentLives: number,
+  maxLives: number,
+  livesUpdatedAt: string
+): { lives: number; shouldUpdate: boolean } => {
+  if (currentLives >= maxLives) {
+    return { lives: maxLives, shouldUpdate: false };
+  }
+
+  const lastUpdate = new Date(livesUpdatedAt).getTime();
+  const now = Date.now();
+  const timePassed = now - lastUpdate;
+  const livesToRegen = Math.floor(timePassed / REGEN_INTERVAL_MS);
+
+  if (livesToRegen > 0) {
+    const newLives = Math.min(maxLives, currentLives + livesToRegen);
+    return { lives: newLives, shouldUpdate: newLives !== currentLives };
+  }
+
+  return { lives: currentLives, shouldUpdate: false };
+};
 
 export const useUserProfile = () => {
   const { user } = useAuth();
@@ -35,9 +61,33 @@ export const useUserProfile = () => {
         .maybeSingle();
 
       if (error) throw error;
+      
+      if (data) {
+        // Check if lives need regeneration
+        const { lives: regenLives, shouldUpdate } = calculateRegeneratedLives(
+          data.lives,
+          data.max_lives,
+          data.lives_updated_at
+        );
+
+        if (shouldUpdate) {
+          // Update the database with regenerated lives
+          await supabase
+            .from("profiles")
+            .update({ 
+              lives: regenLives, 
+              lives_updated_at: new Date().toISOString() 
+            })
+            .eq("user_id", user.id);
+          
+          return { ...data, lives: regenLives } as UserProfile;
+        }
+      }
+      
       return data as UserProfile | null;
     },
     enabled: !!user?.id,
+    refetchInterval: REGEN_INTERVAL_MS, // Refetch every 30 min to check regeneration
   });
 
   const updateProfile = useMutation({
@@ -130,7 +180,10 @@ export const useUserProfile = () => {
       
       const { error } = await supabase
         .from("profiles")
-        .update({ lives: newLives })
+        .update({ 
+          lives: newLives,
+          lives_updated_at: new Date().toISOString() // Reset timer when lives change
+        })
         .eq("user_id", user.id);
 
       if (error) throw error;
@@ -140,6 +193,18 @@ export const useUserProfile = () => {
     },
   });
 
+  // Helper to get time until next life regeneration
+  const getTimeUntilNextLife = (): number | null => {
+    if (!profile || profile.lives >= profile.max_lives) return null;
+    
+    const lastUpdate = new Date(profile.lives_updated_at).getTime();
+    const now = Date.now();
+    const timePassed = now - lastUpdate;
+    const timeUntilNext = REGEN_INTERVAL_MS - (timePassed % REGEN_INTERVAL_MS);
+    
+    return timeUntilNext;
+  };
+
   return {
     profile,
     isLoading,
@@ -148,5 +213,6 @@ export const useUserProfile = () => {
     addXP,
     updateStreak,
     updateLives,
+    getTimeUntilNextLife,
   };
 };

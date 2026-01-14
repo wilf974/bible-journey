@@ -52,6 +52,7 @@ export type Database = {
           id: string
           last_activity_date: string | null
           lives: number
+          lives_updated_at: string
           longest_streak: number
           max_lives: number
           total_lessons_completed: number
@@ -68,6 +69,7 @@ export type Database = {
           id?: string
           last_activity_date?: string | null
           lives?: number
+          lives_updated_at?: string
           longest_streak?: number
           max_lives?: number
           total_lessons_completed?: number
@@ -84,6 +86,7 @@ export type Database = {
           id?: string
           last_activity_date?: string | null
           lives?: number
+          lives_updated_at?: string
           longest_streak?: number
           max_lives?: number
           total_lessons_completed?: number
