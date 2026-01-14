@@ -41,6 +41,48 @@ export type Database = {
         }
         Relationships: []
       }
+      learning_stats: {
+        Row: {
+          correct_answers: number
+          created_at: string
+          id: string
+          lessons_completed: number
+          stat_date: string
+          time_spent_minutes: number
+          total_answers: number
+          updated_at: string
+          user_id: string
+          verses_practiced: number
+          xp_earned: number
+        }
+        Insert: {
+          correct_answers?: number
+          created_at?: string
+          id?: string
+          lessons_completed?: number
+          stat_date?: string
+          time_spent_minutes?: number
+          total_answers?: number
+          updated_at?: string
+          user_id: string
+          verses_practiced?: number
+          xp_earned?: number
+        }
+        Update: {
+          correct_answers?: number
+          created_at?: string
+          id?: string
+          lessons_completed?: number
+          stat_date?: string
+          time_spent_minutes?: number
+          total_answers?: number
+          updated_at?: string
+          user_id?: string
+          verses_practiced?: number
+          xp_earned?: number
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           avatar_url: string | null
@@ -152,6 +194,51 @@ export type Database = {
           score?: number | null
           user_id?: string
           xp_earned?: number
+        }
+        Relationships: []
+      }
+      verse_progress: {
+        Row: {
+          created_at: string
+          ease_factor: number
+          id: string
+          interval_days: number
+          last_practiced_at: string | null
+          mastery_level: number
+          next_review_at: string | null
+          times_correct: number
+          times_practiced: number
+          updated_at: string
+          user_id: string
+          verse_id: string
+        }
+        Insert: {
+          created_at?: string
+          ease_factor?: number
+          id?: string
+          interval_days?: number
+          last_practiced_at?: string | null
+          mastery_level?: number
+          next_review_at?: string | null
+          times_correct?: number
+          times_practiced?: number
+          updated_at?: string
+          user_id: string
+          verse_id: string
+        }
+        Update: {
+          created_at?: string
+          ease_factor?: number
+          id?: string
+          interval_days?: number
+          last_practiced_at?: string | null
+          mastery_level?: number
+          next_review_at?: string | null
+          times_correct?: number
+          times_practiced?: number
+          updated_at?: string
+          user_id?: string
+          verse_id?: string
         }
         Relationships: []
       }
