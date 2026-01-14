@@ -1,14 +1,21 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { X, Star, Zap, BookOpen } from "lucide-react";
+import { X, Star, Zap, BookOpen, Flame, Shield } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import QuizQuestion from "@/components/QuizQuestion";
 import QuizProgress from "@/components/QuizProgress";
 import BlockComplete from "@/components/BlockComplete";
+import ComboIndicator from "@/components/ComboIndicator";
 import { allBooks } from "@/data/bibleContent";
 import { getQuestionsByBookChapter, getQuestionsByBookId } from "@/data/bibleQuestions";
 import { useUserProfile } from "@/hooks/useUserProfile";
 import { useBookProgress } from "@/hooks/useBookProgress";
+import { useComboSystem } from "@/hooks/useComboSystem";
+import { useSoundEffects } from "@/hooks/useSoundEffects";
+import { useDailyChallenges } from "@/hooks/useDailyChallenges";
+import { useLeaderboard } from "@/hooks/useLeaderboard";
+import { usePowerUps } from "@/hooks/usePowerUps";
+import { toast } from "sonner";
 
 const QUESTIONS_PER_BLOCK = 5;
 
@@ -16,14 +23,22 @@ const LessonPage = () => {
   const navigate = useNavigate();
   const { lessonId } = useParams();
   const { profile, addXP, addManna, updateStreak, updateLives } = useUserProfile();
+  const { playSound } = useSoundEffects();
+  const { combo, onCorrectAnswer, onWrongAnswer, calculateXP, resetCombo } = useComboSystem();
+  const { updateProgress: updateChallengeProgress } = useDailyChallenges();
+  const { updateEntry: updateLeaderboard } = useLeaderboard();
+  const { getQuantity, usePowerUp } = usePowerUps();
   
-  // Parse lessonId to get bookId and chapter (format: "bookId-chapter" or "bookId-chapter-intro" etc.)
+  // Power-up states
+  const [hasShield, setHasShield] = useState(false);
+  const [hasDoubleXP, setHasDoubleXP] = useState(false);
+  
+  // Parse lessonId to get bookId and chapter
   const { bookId, chapter } = useMemo(() => {
     if (!lessonId) return { bookId: null, chapter: null };
     
     const parts = lessonId.split("-");
     
-    // Try to find a chapter number in the parts
     for (let i = parts.length - 1; i >= 1; i--) {
       const chapterNum = parseInt(parts[i]);
       if (!isNaN(chapterNum)) {
@@ -32,7 +47,6 @@ const LessonPage = () => {
       }
     }
     
-    // No chapter found, treat the whole thing as bookId (or first part if contains numeric suffix)
     return { bookId: parts[0], chapter: null };
   }, [lessonId]);
 
@@ -40,7 +54,6 @@ const LessonPage = () => {
   
   const book = bookId ? allBooks.find((b) => b.id === bookId) : null;
 
-  // Get questions based on bookId and chapter
   const questions = useMemo(() => {
     if (!bookId) return [];
     if (chapter !== null) {
@@ -61,7 +74,21 @@ const LessonPage = () => {
 
   const maxLives = profile?.max_lives ?? 5;
   
-  // Diviser les questions en blocs
+  // Check for active power-ups on mount
+  useEffect(() => {
+    const shieldCount = getQuantity("shield");
+    const doubleXpCount = getQuantity("double_xp");
+    
+    if (shieldCount > 0) {
+      setHasShield(true);
+    }
+    if (doubleXpCount > 0) {
+      setHasDoubleXP(true);
+      usePowerUp.mutate("double_xp");
+      toast.info("⚡ Double XP activé !", { duration: 2000 });
+    }
+  }, []);
+  
   const questionBlocks = useMemo(() => {
     const blocks = [];
     for (let i = 0; i < questions.length; i += QUESTIONS_PER_BLOCK) {
@@ -76,15 +103,44 @@ const LessonPage = () => {
 
   const handleAnswer = (isCorrect: boolean) => {
     if (isCorrect) {
+      onCorrectAnswer();
+      playSound("correct");
+      
+      // Play combo sound for streaks
+      if (combo.streak >= 2) {
+        setTimeout(() => playSound("combo"), 200);
+      }
+      
       setScore((prev) => prev + 1);
       setBlockScore((prev) => prev + 1);
-      const xp = questions[currentQuestion].xpReward;
-      setXpEarned((prev) => prev + xp);
-      setBlockXp((prev) => prev + xp);
+      
+      let baseXp = questions[currentQuestion].xpReward;
+      let finalXp = calculateXP(baseXp);
+      
+      // Apply double XP if active
+      if (hasDoubleXP) {
+        finalXp *= 2;
+      }
+      
+      setXpEarned((prev) => prev + finalXp);
+      setBlockXp((prev) => prev + finalXp);
+      
+      // Update daily challenge for XP
+      updateChallengeProgress.mutate({ type: "xp", increment: finalXp });
     } else {
+      onWrongAnswer();
+      playSound("wrong");
+      
+      // Check if shield is active
+      if (hasShield) {
+        setHasShield(false);
+        usePowerUp.mutate("shield");
+        toast.info("🛡️ Bouclier utilisé ! Vie protégée.", { duration: 2000 });
+        return;
+      }
+      
       setLives((prev) => {
         const newLives = Math.max(0, prev - 1);
-        // Update lives in database
         updateLives.mutate(-1);
         return newLives;
       });
@@ -93,13 +149,10 @@ const LessonPage = () => {
 
   const handleNext = () => {
     const isLastQuestionInBlock = questionInBlock >= currentBlockQuestions.length - 1;
-    const isLastBlock = currentBlock >= totalBlocks - 1;
 
     if (isLastQuestionInBlock) {
-      // Fin du bloc
       setShowBlockComplete(true);
     } else {
-      // Question suivante dans le même bloc
       setCurrentQuestion((prev) => prev + 1);
     }
   };
@@ -109,17 +162,34 @@ const LessonPage = () => {
     
     if (isLastBlock) {
       setIsComplete(true);
-      // Save XP and update streak
+      playSound("complete");
+      
       if (xpEarned > 0) {
         addXP.mutate(xpEarned);
       }
       
-      // Award manna for completing the lesson (5 manna per lesson)
       addManna.mutate(5);
-      
       updateStreak.mutate();
       
-      // Save progress to database
+      // Update daily challenges
+      updateChallengeProgress.mutate({ type: "lessons", increment: 1 });
+      
+      // Check for perfect lesson
+      if (score === questions.length) {
+        updateChallengeProgress.mutate({ type: "perfect", increment: 1 });
+        updateLeaderboard.mutate({ 
+          xpIncrement: xpEarned, 
+          lessonIncrement: 1, 
+          perfectIncrement: 1 
+        });
+      } else {
+        updateLeaderboard.mutate({ 
+          xpIncrement: xpEarned, 
+          lessonIncrement: 1, 
+          perfectIncrement: 0 
+        });
+      }
+      
       if (bookId) {
         saveProgress.mutate({
           bookId,
@@ -130,7 +200,6 @@ const LessonPage = () => {
         });
       }
     } else {
-      // Passer au bloc suivant
       setCurrentBlock((prev) => prev + 1);
       setCurrentQuestion((prev) => prev + 1);
       setBlockScore(0);
@@ -188,6 +257,7 @@ const LessonPage = () => {
                 setBlockScore(0);
                 setXpEarned(0);
                 setBlockXp(0);
+                resetCombo();
               }} 
               className="w-full"
             >
@@ -201,20 +271,31 @@ const LessonPage = () => {
 
   if (isComplete) {
     const percentage = Math.round((score / questions.length) * 100);
+    const isPerfect = score === questions.length;
     
     return (
       <div className="min-h-screen bg-background flex items-center justify-center p-4">
         <div className="bg-card rounded-2xl p-8 shadow-card border border-border max-w-md w-full text-center animate-slide-in">
           <div className="w-24 h-24 mx-auto mb-6 rounded-full gradient-gold flex items-center justify-center shadow-glow animate-celebrate">
-            <span className="text-5xl">🏆</span>
+            <span className="text-5xl">{isPerfect ? "👑" : "🏆"}</span>
           </div>
           
           <h2 className="text-3xl font-display font-bold text-foreground mb-2">
-            Félicitations !
+            {isPerfect ? "Parfait !" : "Félicitations !"}
           </h2>
           <p className="text-muted-foreground mb-6">
-            {book ? `${book.name} - Chapitre ${chapter}` : "Leçon"} terminé avec brio !
+            {book ? `${book.name} - Chapitre ${chapter}` : "Leçon"} terminé !
           </p>
+
+          {/* Combo max */}
+          {combo.maxStreak >= 3 && (
+            <div className="bg-gradient-to-r from-orange-500/20 to-red-500/20 rounded-xl p-3 mb-4 flex items-center justify-center gap-2">
+              <Flame className="w-5 h-5 text-orange-500" />
+              <span className="font-bold text-orange-600">
+                Meilleur combo : {combo.maxStreak} réponses !
+              </span>
+            </div>
+          )}
 
           {/* Stats */}
           <div className="grid grid-cols-4 gap-3 mb-8">
@@ -257,8 +338,29 @@ const LessonPage = () => {
 
   return (
     <div className="min-h-screen bg-background">
+      {/* Combo indicator */}
+      <ComboIndicator streak={combo.streak} multiplier={combo.multiplier} />
+      
+      {/* Active power-ups indicator */}
+      {(hasShield || hasDoubleXP) && (
+        <div className="fixed top-20 left-4 z-50 flex flex-col gap-2">
+          {hasShield && (
+            <div className="bg-blue-500/20 border border-blue-500/30 text-blue-600 px-3 py-1.5 rounded-lg flex items-center gap-2 text-sm font-medium">
+              <Shield className="w-4 h-4" />
+              Bouclier actif
+            </div>
+          )}
+          {hasDoubleXP && (
+            <div className="bg-purple-500/20 border border-purple-500/30 text-purple-600 px-3 py-1.5 rounded-lg flex items-center gap-2 text-sm font-medium">
+              <Zap className="w-4 h-4" />
+              Double XP
+            </div>
+          )}
+        </div>
+      )}
+
       {/* Header */}
-      <header className="sticky top-0 z-50 bg-background/80 backdrop-blur-lg border-b border-border">
+      <header className="sticky top-0 z-40 bg-background/80 backdrop-blur-lg border-b border-border">
         <div className="container max-w-2xl mx-auto px-4 h-16 flex items-center gap-3">
           <Button
             variant="ghost"
@@ -272,6 +374,14 @@ const LessonPage = () => {
             <div className="flex-1">
               <p className="text-sm font-medium">{book.name}</p>
               {chapter && <p className="text-xs text-muted-foreground">Chapitre {chapter}</p>}
+            </div>
+          )}
+          
+          {/* XP earned indicator */}
+          {xpEarned > 0 && (
+            <div className="flex items-center gap-1 bg-primary/10 text-primary px-2 py-1 rounded-lg text-sm font-medium">
+              <Zap className="w-4 h-4" />
+              +{xpEarned}
             </div>
           )}
         </div>
@@ -316,8 +426,12 @@ const LessonPage = () => {
               question={questions[currentQuestion].question}
               verse={questions[currentQuestion].verse}
               options={questions[currentQuestion].options}
+              explanation={questions[currentQuestion].explanation}
+              verseReference={questions[currentQuestion].verseReference}
               onAnswer={handleAnswer}
               onNext={handleNext}
+              manna={profile?.manna ?? 0}
+              showHint={true}
             />
           </>
         )}

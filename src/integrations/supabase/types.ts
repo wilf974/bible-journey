@@ -14,6 +14,48 @@ export type Database = {
   }
   public: {
     Tables: {
+      daily_challenges: {
+        Row: {
+          challenge_date: string
+          challenge_type: string
+          claimed: boolean
+          completed: boolean
+          created_at: string
+          current_value: number
+          id: string
+          reward_manna: number
+          reward_xp: number
+          target_value: number
+          user_id: string
+        }
+        Insert: {
+          challenge_date?: string
+          challenge_type: string
+          claimed?: boolean
+          completed?: boolean
+          created_at?: string
+          current_value?: number
+          id?: string
+          reward_manna?: number
+          reward_xp?: number
+          target_value: number
+          user_id: string
+        }
+        Update: {
+          challenge_date?: string
+          challenge_type?: string
+          claimed?: boolean
+          completed?: boolean
+          created_at?: string
+          current_value?: number
+          id?: string
+          reward_manna?: number
+          reward_xp?: number
+          target_value?: number
+          user_id?: string
+        }
+        Relationships: []
+      }
       daily_goals: {
         Row: {
           completed: boolean
@@ -38,6 +80,39 @@ export type Database = {
           id?: string
           target_xp?: number
           user_id?: string
+        }
+        Relationships: []
+      }
+      leaderboard_entries: {
+        Row: {
+          created_at: string
+          id: string
+          lessons_completed: number
+          perfect_lessons: number
+          updated_at: string
+          user_id: string
+          week_start: string
+          xp_earned: number
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          lessons_completed?: number
+          perfect_lessons?: number
+          updated_at?: string
+          user_id: string
+          week_start: string
+          xp_earned?: number
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          lessons_completed?: number
+          perfect_lessons?: number
+          updated_at?: string
+          user_id?: string
+          week_start?: string
+          xp_earned?: number
         }
         Relationships: []
       }
@@ -80,6 +155,33 @@ export type Database = {
           user_id?: string
           verses_practiced?: number
           xp_earned?: number
+        }
+        Relationships: []
+      }
+      power_ups: {
+        Row: {
+          created_at: string
+          id: string
+          power_up_type: string
+          quantity: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          power_up_type: string
+          quantity?: number
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          power_up_type?: string
+          quantity?: number
+          updated_at?: string
+          user_id?: string
         }
         Relationships: []
       }
