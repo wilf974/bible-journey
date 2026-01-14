@@ -1,13 +1,15 @@
 import { useState } from "react";
-import { BookOpen, Star, Target, Trophy, ChevronRight } from "lucide-react";
+import { BookOpen, Star, Target, Trophy, ChevronRight, ScrollText } from "lucide-react";
 import Header from "@/components/Header";
 import StreakCard from "@/components/StreakCard";
 import XPProgress from "@/components/XPProgress";
 import LessonCard from "@/components/LessonCard";
 import BibleBookCard from "@/components/BibleBookCard";
+import VerseCard from "@/components/VerseCard";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { oldTestamentBooks, newTestamentBooks, sampleLessons } from "@/data/bibleContent";
+import { bibleVerses, versesCategories } from "@/data/versesContent";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { useUserProfile } from "@/hooks/useUserProfile";
@@ -136,14 +138,17 @@ const Dashboard = () => {
           </div>
         </div>
 
-        {/* Tabs: Lessons / Bible */}
+        {/* Tabs: Lessons / Verses / Bible */}
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className="grid w-full grid-cols-2 mb-6">
-            <TabsTrigger value="lessons" className="font-semibold">
-              📚 Leçons du jour
+          <TabsList className="grid w-full grid-cols-3 mb-6">
+            <TabsTrigger value="lessons" className="font-semibold text-xs sm:text-sm">
+              📚 Leçons
             </TabsTrigger>
-            <TabsTrigger value="bible" className="font-semibold">
-              📖 Explorer la Bible
+            <TabsTrigger value="verses" className="font-semibold text-xs sm:text-sm">
+              📜 Versets
+            </TabsTrigger>
+            <TabsTrigger value="bible" className="font-semibold text-xs sm:text-sm">
+              📖 Bible
             </TabsTrigger>
           </TabsList>
 
@@ -161,6 +166,74 @@ const Dashboard = () => {
                 onClick={() => navigate(`/lesson/${lesson.id}`)}
               />
             ))}
+          </TabsContent>
+
+          <TabsContent value="verses">
+            <div className="space-y-6">
+              {/* Categories */}
+              <div className="flex flex-wrap gap-2 mb-4">
+                {versesCategories.map((cat) => (
+                  <button
+                    key={cat.id}
+                    className="px-3 py-1.5 bg-muted rounded-full text-sm font-medium hover:bg-primary/10 hover:text-primary transition-colors flex items-center gap-1.5"
+                  >
+                    <span>{cat.icon}</span>
+                    {cat.name}
+                  </button>
+                ))}
+              </div>
+
+              {/* Featured verse */}
+              <div className="bg-gradient-to-br from-primary/20 to-secondary/20 rounded-2xl p-6 border border-primary/20">
+                <div className="flex items-center gap-2 mb-3">
+                  <ScrollText className="w-5 h-5 text-primary" />
+                  <span className="text-sm font-medium text-primary">Verset du jour</span>
+                </div>
+                <p className="text-lg italic text-foreground mb-2">
+                  "{bibleVerses[0]?.text.substring(0, 100)}..."
+                </p>
+                <p className="text-sm text-muted-foreground mb-4">— {bibleVerses[0]?.reference}</p>
+                <Button 
+                  variant="hero" 
+                  className="w-full"
+                  onClick={() => navigate(`/verse/${bibleVerses[0]?.id}`)}
+                >
+                  Apprendre ce verset
+                </Button>
+              </div>
+
+              {/* Verses to learn */}
+              <div>
+                <h3 className="text-lg font-display font-bold text-foreground mb-3 flex items-center gap-2">
+                  <span className="w-8 h-8 rounded-lg gradient-gold flex items-center justify-center text-sm">
+                    ✨
+                  </span>
+                  Versets à mémoriser
+                </h3>
+                <div className="space-y-3">
+                  {bibleVerses.slice(0, 5).map((verse, index) => {
+                    const category = versesCategories.find(c => c.id === verse.category);
+                    return (
+                      <VerseCard
+                        key={verse.id}
+                        reference={verse.reference}
+                        preview={verse.text.substring(0, 80)}
+                        category={verse.category}
+                        categoryIcon={category?.icon || "📖"}
+                        difficulty={verse.difficulty}
+                        isLocked={index > 2}
+                        masteryLevel={index === 0 ? 3 : 0}
+                        onClick={() => navigate(`/verse/${verse.id}`)}
+                      />
+                    );
+                  })}
+                </div>
+                <Button variant="ghost" className="w-full mt-2">
+                  Voir tous les versets
+                  <ChevronRight className="w-4 h-4 ml-1" />
+                </Button>
+              </div>
+            </div>
           </TabsContent>
 
           <TabsContent value="bible">
