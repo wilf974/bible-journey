@@ -9,23 +9,28 @@ import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { oldTestamentBooks, newTestamentBooks, sampleLessons } from "@/data/bibleContent";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "@/contexts/AuthContext";
+import { useUserProfile } from "@/hooks/useUserProfile";
 
 const Dashboard = () => {
   const navigate = useNavigate();
+  const { user } = useAuth();
+  const { profile, isLoading } = useUserProfile();
   const [activeTab, setActiveTab] = useState("lessons");
 
-  // Mock user data (will be replaced with real data from Supabase)
+  // Use profile data or defaults
   const userStats = {
-    streak: 7,
-    xp: 1250,
-    lives: 5,
-    level: 3,
-    levelXP: 2000,
-    todayComplete: true,
-    longestStreak: 14,
+    streak: profile?.current_streak ?? 0,
+    xp: profile?.current_xp ?? 0,
+    lives: profile?.lives ?? 5,
+    level: profile?.current_level ?? 1,
+    levelXP: (profile?.current_level ?? 1) * 500,
+    todayComplete: profile?.last_activity_date === new Date().toISOString().split('T')[0],
+    longestStreak: profile?.longest_streak ?? 0,
+    displayName: profile?.display_name ?? user?.email?.split('@')[0] ?? 'Disciple',
   };
 
-  // Mock progress data
+  // Mock progress data (will be replaced with real data)
   const completedBooks: Record<string, number> = {
     genesis: 3,
     exodus: 0,
@@ -46,6 +51,19 @@ const Dashboard = () => {
     }
   };
 
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-16 h-16 mx-auto mb-4 rounded-xl gradient-gold flex items-center justify-center shadow-button animate-pulse">
+            <span className="text-3xl">📖</span>
+          </div>
+          <p className="text-muted-foreground">Chargement de votre progression...</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-background">
       <Header
@@ -59,7 +77,7 @@ const Dashboard = () => {
         {/* Welcome section */}
         <div className="mb-8">
           <h1 className="text-3xl font-display font-bold text-foreground mb-2">
-            Bonjour, Disciple ! 👋
+            Bonjour, {userStats.displayName} ! 👋
           </h1>
           <p className="text-muted-foreground">
             Continuez votre voyage à travers les Écritures
