@@ -9,6 +9,7 @@ import Index from "./pages/Index";
 import Dashboard from "./pages/Dashboard";
 import LessonPage from "./pages/LessonPage";
 import BookPage from "./pages/BookPage";
+import VerseLearningPage from "./pages/VerseLearningPage";
 import AuthPage from "./pages/AuthPage";
 import NotFound from "./pages/NotFound";
 
@@ -44,6 +45,14 @@ const App = () => (
               element={
                 <ProtectedRoute>
                   <BookPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/verse/:verseId"
+              element={
+                <ProtectedRoute>
+                  <VerseLearningPage />
                 </ProtectedRoute>
               }
             />
