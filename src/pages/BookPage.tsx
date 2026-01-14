@@ -88,21 +88,40 @@ const BookPage = () => {
             {Array.from({ length: book.chaptersCount }, (_, i) => i + 1).map((chapter) => {
               const hasQuestions = availableChapters.includes(chapter);
               const isCompleted = completedChaptersArray.includes(chapter);
-              const isLocked = !hasQuestions;
               const chapterQuestions = bookId ? getQuestionsByBookChapter(bookId, chapter) : [];
+              
+              // Find the index in available chapters
+              const chapterIndex = availableChapters.indexOf(chapter);
+              
+              // A chapter is unlocked if:
+              // 1. It's the first available chapter (index 0)
+              // 2. The previous available chapter has been completed
+              const previousAvailableChapter = chapterIndex > 0 ? availableChapters[chapterIndex - 1] : null;
+              const isPreviousCompleted = previousAvailableChapter ? completedChaptersArray.includes(previousAvailableChapter) : true;
+              const isUnlocked = hasQuestions && (chapterIndex === 0 || isPreviousCompleted);
+              
+              const isLocked = !hasQuestions || !isUnlocked;
 
               return (
                 <button
                   key={chapter}
-                  onClick={() => hasQuestions && navigate(`/lesson/${bookId}-${chapter}`)}
+                  onClick={() => !isLocked && navigate(`/lesson/${bookId}-${chapter}`)}
                   disabled={isLocked}
-                  title={hasQuestions ? `Chapitre ${chapter} - ${chapterQuestions.length} questions` : `Chapitre ${chapter} - Bientôt disponible`}
+                  title={
+                    isCompleted 
+                      ? `Chapitre ${chapter} - Terminé !` 
+                      : isLocked && hasQuestions
+                        ? `Chapitre ${chapter} - Terminez le chapitre précédent d'abord`
+                        : hasQuestions 
+                          ? `Chapitre ${chapter} - ${chapterQuestions.length} questions` 
+                          : `Chapitre ${chapter} - Bientôt disponible`
+                  }
                   className={`
                     aspect-square rounded-xl flex items-center justify-center font-bold text-lg
                     transition-all duration-200
                     ${isCompleted 
                       ? "bg-green-500 text-white shadow-md" 
-                      : hasQuestions 
+                      : !isLocked
                         ? "bg-primary text-primary-foreground hover:opacity-90 shadow-button hover:scale-105" 
                         : "bg-muted text-muted-foreground cursor-not-allowed"
                     }
@@ -122,15 +141,27 @@ const BookPage = () => {
         </div>
 
         {/* Start Learning Button */}
-        {availableChapters.length > 0 && (
-          <Button 
-            className="w-full py-6 text-lg font-bold gradient-gold hover:opacity-90"
-            onClick={() => navigate(`/lesson/${bookId}-${availableChapters[0]}`)}
-          >
-            <Play className="w-5 h-5 mr-2" />
-            Commencer {book.name}
-          </Button>
-        )}
+        {availableChapters.length > 0 && (() => {
+          // Find next unlocked chapter (first non-completed chapter that is unlocked)
+          const nextChapter = availableChapters.find((chapter, index) => {
+            if (completedChaptersArray.includes(chapter)) return false;
+            if (index === 0) return true;
+            const prevChapter = availableChapters[index - 1];
+            return completedChaptersArray.includes(prevChapter);
+          }) || availableChapters[0];
+          
+          const allCompleted = availableChapters.every(ch => completedChaptersArray.includes(ch));
+          
+          return (
+            <Button 
+              className="w-full py-6 text-lg font-bold gradient-gold hover:opacity-90"
+              onClick={() => navigate(`/lesson/${bookId}-${nextChapter}`)}
+            >
+              <Play className="w-5 h-5 mr-2" />
+              {allCompleted ? `Réviser ${book.name}` : `Continuer ${book.name}`}
+            </Button>
+          );
+        })()}
 
         {availableChapters.length === 0 && (
           <div className="text-center py-8 text-muted-foreground">
