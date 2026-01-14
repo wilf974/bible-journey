@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { BookOpen, Star, Target, Trophy, ChevronRight, ScrollText, TrendingUp, Brain, Award } from "lucide-react";
+import { BookOpen, Star, Target, Trophy, ChevronRight, ScrollText, TrendingUp, Brain, Award, Swords } from "lucide-react";
 import Header from "@/components/Header";
 import StreakCard from "@/components/StreakCard";
 import XPProgress from "@/components/XPProgress";
@@ -8,6 +8,7 @@ import BibleBookCard from "@/components/BibleBookCard";
 import VerseCard from "@/components/VerseCard";
 import DailyChallenges from "@/components/DailyChallenges";
 import LeaderboardCard from "@/components/LeaderboardCard";
+import PvpMatchmaking from "@/components/PvpMatchmaking";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { oldTestamentBooks, newTestamentBooks, sampleLessons } from "@/data/bibleContent";
@@ -27,6 +28,7 @@ const Dashboard = () => {
   const { todayStats } = useLearningStats();
   const { achievements } = useAchievements();
   const [activeTab, setActiveTab] = useState("lessons");
+  const [pvpOpen, setPvpOpen] = useState(false);
 
   const versesToReview = getVersesToReview();
   const unlockedBadges = achievements.filter((a) => a.unlocked).length;
@@ -167,6 +169,19 @@ const Dashboard = () => {
               <p className="text-sm text-muted-foreground">
                 {unlockedBadges} badge{unlockedBadges > 1 ? "s" : ""} débloqué{unlockedBadges > 1 ? "s" : ""}
               </p>
+            </div>
+          </Button>
+          <Button
+            variant="outline"
+            className="h-auto py-4 px-6 justify-start gap-4 border-purple-500/30 hover:bg-purple-500/5"
+            onClick={() => setPvpOpen(true)}
+          >
+            <div className="w-12 h-12 rounded-xl bg-purple-500/10 flex items-center justify-center">
+              <Swords className="w-6 h-6 text-purple-500" />
+            </div>
+            <div className="text-left">
+              <p className="font-bold">Mode Défi PvP</p>
+              <p className="text-sm text-muted-foreground">Affrontez d'autres joueurs</p>
             </div>
           </Button>
         </div>
@@ -365,6 +380,8 @@ const Dashboard = () => {
           </TabsContent>
         </Tabs>
       </main>
+
+      <PvpMatchmaking open={pvpOpen} onOpenChange={setPvpOpen} />
     </div>
   );
 };
