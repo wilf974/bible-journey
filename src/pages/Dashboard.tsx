@@ -6,6 +6,8 @@ import XPProgress from "@/components/XPProgress";
 import LessonCard from "@/components/LessonCard";
 import BibleBookCard from "@/components/BibleBookCard";
 import VerseCard from "@/components/VerseCard";
+import DailyChallenges from "@/components/DailyChallenges";
+import LeaderboardCard from "@/components/LeaderboardCard";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { oldTestamentBooks, newTestamentBooks, sampleLessons } from "@/data/bibleContent";
@@ -112,6 +114,12 @@ const Dashboard = () => {
             levelXP={userStats.levelXP}
             level={userStats.level}
           />
+        </div>
+
+        {/* Daily Challenges & Leaderboard */}
+        <div className="grid md:grid-cols-2 gap-6 mb-8">
+          <DailyChallenges />
+          <LeaderboardCard />
         </div>
 
         {/* Quick actions */}
