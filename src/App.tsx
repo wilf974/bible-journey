@@ -14,6 +14,7 @@ import StatsPage from "./pages/StatsPage";
 import ReviewPage from "./pages/ReviewPage";
 import AchievementsPage from "./pages/AchievementsPage";
 import VersesPage from "./pages/VersesPage";
+import ChallengePage from "./pages/ChallengePage";
 import AuthPage from "./pages/AuthPage";
 import NotFound from "./pages/NotFound";
 
@@ -89,6 +90,14 @@ const App = () => (
               element={
                 <ProtectedRoute>
                   <VersesPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/challenge/:challengeId"
+              element={
+                <ProtectedRoute>
+                  <ChallengePage />
                 </ProtectedRoute>
               }
             />

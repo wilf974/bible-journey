@@ -158,6 +158,72 @@ export type Database = {
         }
         Relationships: []
       }
+      player_challenges: {
+        Row: {
+          book_id: string | null
+          challenger_answers: number
+          challenger_id: string
+          challenger_score: number
+          chapter: number | null
+          completed_at: string | null
+          created_at: string
+          current_question: number
+          id: string
+          manna_reward: number
+          opponent_answers: number
+          opponent_id: string | null
+          opponent_score: number
+          started_at: string | null
+          status: string
+          total_questions: number
+          updated_at: string
+          winner_id: string | null
+          xp_reward: number
+        }
+        Insert: {
+          book_id?: string | null
+          challenger_answers?: number
+          challenger_id: string
+          challenger_score?: number
+          chapter?: number | null
+          completed_at?: string | null
+          created_at?: string
+          current_question?: number
+          id?: string
+          manna_reward?: number
+          opponent_answers?: number
+          opponent_id?: string | null
+          opponent_score?: number
+          started_at?: string | null
+          status?: string
+          total_questions?: number
+          updated_at?: string
+          winner_id?: string | null
+          xp_reward?: number
+        }
+        Update: {
+          book_id?: string | null
+          challenger_answers?: number
+          challenger_id?: string
+          challenger_score?: number
+          chapter?: number | null
+          completed_at?: string | null
+          created_at?: string
+          current_question?: number
+          id?: string
+          manna_reward?: number
+          opponent_answers?: number
+          opponent_id?: string | null
+          opponent_score?: number
+          started_at?: string | null
+          status?: string
+          total_questions?: number
+          updated_at?: string
+          winner_id?: string | null
+          xp_reward?: number
+        }
+        Relationships: []
+      }
       power_ups: {
         Row: {
           created_at: string
@@ -200,6 +266,9 @@ export type Database = {
           longest_streak: number
           manna: number
           max_lives: number
+          pvp_draws: number
+          pvp_losses: number
+          pvp_wins: number
           total_lessons_completed: number
           updated_at: string
           user_id: string
@@ -218,6 +287,9 @@ export type Database = {
           longest_streak?: number
           manna?: number
           max_lives?: number
+          pvp_draws?: number
+          pvp_losses?: number
+          pvp_wins?: number
           total_lessons_completed?: number
           updated_at?: string
           user_id: string
@@ -236,6 +308,9 @@ export type Database = {
           longest_streak?: number
           manna?: number
           max_lives?: number
+          pvp_draws?: number
+          pvp_losses?: number
+          pvp_wins?: number
           total_lessons_completed?: number
           updated_at?: string
           user_id?: string
