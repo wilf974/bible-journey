@@ -1,10 +1,10 @@
-import { useState } from "react";
-import { Flame, Zap, LogOut, User } from "lucide-react";
+import { useState, useEffect } from "react";
+import { Flame, Zap, LogOut, User, Moon, Sun, Settings } from "lucide-react";
 import { Button } from "./ui/button";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import LivesIndicator from "./LivesIndicator";
-import MannaShop from "./MannaShop";
+import PowerUpShop from "./PowerUpShop";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -35,10 +35,39 @@ const Header = ({
   const { signOut, user } = useAuth();
   const navigate = useNavigate();
   const [shopOpen, setShopOpen] = useState(false);
+  const [isDark, setIsDark] = useState(() => {
+    if (typeof window !== "undefined") {
+      return document.documentElement.classList.contains("dark");
+    }
+    return false;
+  });
+
+  useEffect(() => {
+    if (isDark) {
+      document.documentElement.classList.add("dark");
+      localStorage.setItem("theme", "dark");
+    } else {
+      document.documentElement.classList.remove("dark");
+      localStorage.setItem("theme", "light");
+    }
+  }, [isDark]);
+
+  // Initialize theme from localStorage on mount
+  useEffect(() => {
+    const savedTheme = localStorage.getItem("theme");
+    if (savedTheme === "dark") {
+      setIsDark(true);
+      document.documentElement.classList.add("dark");
+    }
+  }, []);
 
   const handleSignOut = async () => {
     await signOut();
     navigate("/");
+  };
+
+  const toggleTheme = () => {
+    setIsDark(!isDark);
   };
 
   return (
@@ -57,7 +86,7 @@ const Header = ({
 
           {/* Stats */}
           <div className="flex items-center gap-2 sm:gap-4">
-            {/* Manna */}
+            {/* Manna / Shop */}
             <button 
               onClick={() => setShopOpen(true)}
               className="flex items-center gap-1.5 bg-amber-500/10 px-3 py-1.5 rounded-lg hover:bg-amber-500/20 transition-colors"
@@ -85,6 +114,20 @@ const Header = ({
               getTimeUntilNextLife={getTimeUntilNextLife}
               onShopClick={() => setShopOpen(true)}
             />
+
+            {/* Theme toggle */}
+            <Button 
+              variant="ghost" 
+              size="icon" 
+              onClick={toggleTheme}
+              className="rounded-full"
+            >
+              {isDark ? (
+                <Sun className="w-5 h-5 text-amber-500" />
+              ) : (
+                <Moon className="w-5 h-5 text-secondary" />
+              )}
+            </Button>
 
             {/* Profile */}
             {isLoggedIn ? (
@@ -116,7 +159,7 @@ const Header = ({
         </div>
       </header>
 
-      <MannaShop open={shopOpen} onOpenChange={setShopOpen} />
+      <PowerUpShop open={shopOpen} onOpenChange={setShopOpen} />
     </>
   );
 };
