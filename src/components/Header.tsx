@@ -1,6 +1,14 @@
-import { Flame, Zap, Heart, Settings, User } from "lucide-react";
+import { Flame, Zap, Heart, LogOut, User } from "lucide-react";
 import { Button } from "./ui/button";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { useAuth } from "@/contexts/AuthContext";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 interface HeaderProps {
   streak: number;
@@ -10,11 +18,19 @@ interface HeaderProps {
 }
 
 const Header = ({ streak, xp, lives, isLoggedIn = false }: HeaderProps) => {
+  const { signOut, user } = useAuth();
+  const navigate = useNavigate();
+
+  const handleSignOut = async () => {
+    await signOut();
+    navigate("/");
+  };
+
   return (
     <header className="sticky top-0 z-50 bg-background/80 backdrop-blur-lg border-b border-border">
       <div className="container max-w-4xl mx-auto px-4 h-16 flex items-center justify-between">
         {/* Logo */}
-        <Link to="/" className="flex items-center gap-2">
+        <Link to={isLoggedIn ? "/dashboard" : "/"} className="flex items-center gap-2">
           <div className="w-10 h-10 rounded-xl gradient-gold flex items-center justify-center shadow-button">
             <span className="text-xl">📖</span>
           </div>
@@ -45,11 +61,25 @@ const Header = ({ streak, xp, lives, isLoggedIn = false }: HeaderProps) => {
 
           {/* Profile */}
           {isLoggedIn ? (
-            <Link to="/profile">
-              <Button variant="ghost" size="icon" className="rounded-full">
-                <User className="w-5 h-5" />
-              </Button>
-            </Link>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" size="icon" className="rounded-full">
+                  <User className="w-5 h-5" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-48">
+                <div className="px-2 py-1.5">
+                  <p className="text-sm font-medium text-foreground truncate">
+                    {user?.email}
+                  </p>
+                </div>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem onClick={handleSignOut} className="text-destructive cursor-pointer">
+                  <LogOut className="w-4 h-4 mr-2" />
+                  Déconnexion
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           ) : (
             <Link to="/auth">
               <Button size="sm">Connexion</Button>

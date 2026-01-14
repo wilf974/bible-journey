@@ -14,7 +14,144 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      daily_goals: {
+        Row: {
+          completed: boolean
+          earned_xp: number
+          goal_date: string
+          id: string
+          target_xp: number
+          user_id: string
+        }
+        Insert: {
+          completed?: boolean
+          earned_xp?: number
+          goal_date?: string
+          id?: string
+          target_xp?: number
+          user_id: string
+        }
+        Update: {
+          completed?: boolean
+          earned_xp?: number
+          goal_date?: string
+          id?: string
+          target_xp?: number
+          user_id?: string
+        }
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          avatar_url: string | null
+          created_at: string
+          current_level: number
+          current_streak: number
+          current_xp: number
+          display_name: string | null
+          id: string
+          last_activity_date: string | null
+          lives: number
+          longest_streak: number
+          max_lives: number
+          total_lessons_completed: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          avatar_url?: string | null
+          created_at?: string
+          current_level?: number
+          current_streak?: number
+          current_xp?: number
+          display_name?: string | null
+          id?: string
+          last_activity_date?: string | null
+          lives?: number
+          longest_streak?: number
+          max_lives?: number
+          total_lessons_completed?: number
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          avatar_url?: string | null
+          created_at?: string
+          current_level?: number
+          current_streak?: number
+          current_xp?: number
+          display_name?: string | null
+          id?: string
+          last_activity_date?: string | null
+          lives?: number
+          longest_streak?: number
+          max_lives?: number
+          total_lessons_completed?: number
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      user_achievements: {
+        Row: {
+          achievement_id: string
+          id: string
+          unlocked_at: string
+          user_id: string
+        }
+        Insert: {
+          achievement_id: string
+          id?: string
+          unlocked_at?: string
+          user_id: string
+        }
+        Update: {
+          achievement_id?: string
+          id?: string
+          unlocked_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      user_progress: {
+        Row: {
+          book_id: string
+          chapter_id: string
+          completed: boolean
+          completed_at: string | null
+          created_at: string
+          id: string
+          lesson_id: string
+          score: number | null
+          user_id: string
+          xp_earned: number
+        }
+        Insert: {
+          book_id: string
+          chapter_id: string
+          completed?: boolean
+          completed_at?: string | null
+          created_at?: string
+          id?: string
+          lesson_id: string
+          score?: number | null
+          user_id: string
+          xp_earned?: number
+        }
+        Update: {
+          book_id?: string
+          chapter_id?: string
+          completed?: boolean
+          completed_at?: string | null
+          created_at?: string
+          id?: string
+          lesson_id?: string
+          score?: number | null
+          user_id?: string
+          xp_earned?: number
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never

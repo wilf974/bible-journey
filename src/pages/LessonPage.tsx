@@ -5,26 +5,33 @@ import { Button } from "@/components/ui/button";
 import QuizQuestion from "@/components/QuizQuestion";
 import QuizProgress from "@/components/QuizProgress";
 import { sampleQuestions } from "@/data/bibleContent";
+import { useUserProfile } from "@/hooks/useUserProfile";
 
 const LessonPage = () => {
   const navigate = useNavigate();
   const { lessonId } = useParams();
+  const { profile, addXP, updateStreak, updateLives } = useUserProfile();
   
   const [currentQuestion, setCurrentQuestion] = useState(0);
-  const [lives, setLives] = useState(5);
+  const [lives, setLives] = useState(profile?.lives ?? 5);
   const [score, setScore] = useState(0);
   const [xpEarned, setXpEarned] = useState(0);
   const [isComplete, setIsComplete] = useState(false);
 
   const questions = sampleQuestions;
-  const maxLives = 5;
+  const maxLives = profile?.max_lives ?? 5;
 
   const handleAnswer = (isCorrect: boolean) => {
     if (isCorrect) {
       setScore((prev) => prev + 1);
       setXpEarned((prev) => prev + questions[currentQuestion].xpReward);
     } else {
-      setLives((prev) => Math.max(0, prev - 1));
+      setLives((prev) => {
+        const newLives = Math.max(0, prev - 1);
+        // Update lives in database
+        updateLives.mutate(-1);
+        return newLives;
+      });
     }
   };
 
@@ -33,6 +40,11 @@ const LessonPage = () => {
       setCurrentQuestion((prev) => prev + 1);
     } else {
       setIsComplete(true);
+      // Save XP and update streak
+      if (xpEarned > 0) {
+        addXP.mutate(xpEarned);
+      }
+      updateStreak.mutate();
     }
   };
 
@@ -56,7 +68,7 @@ const LessonPage = () => {
             <Button 
               variant="outline" 
               onClick={() => {
-                setLives(5);
+                setLives(profile?.lives ?? 5);
                 setCurrentQuestion(0);
                 setScore(0);
                 setXpEarned(0);
