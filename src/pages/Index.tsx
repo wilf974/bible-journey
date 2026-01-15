@@ -1,9 +1,11 @@
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { BookOpen, Flame, Star, Trophy, ArrowRight, CheckCircle } from "lucide-react";
+import { BookOpen, Flame, Star, Trophy, ArrowRight, CheckCircle, Users } from "lucide-react";
+import { useOnlinePlayers } from "@/hooks/useOnlinePlayers";
 
 const Index = () => {
   const navigate = useNavigate();
+  const { onlineCount, isConnected } = useOnlinePlayers();
 
   const features = [
     {
@@ -61,6 +63,20 @@ const Index = () => {
 
         {/* Hero Content */}
         <div className="container max-w-6xl mx-auto px-4 py-12 sm:py-20 text-center">
+          {/* Online Players Counter */}
+          {isConnected && (
+            <div className="inline-flex items-center gap-2 bg-green-500/10 px-3 py-1.5 rounded-full mb-3 sm:mb-4">
+              <span className="relative flex h-2 w-2">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
+              </span>
+              <Users className="w-3.5 h-3.5 text-green-600" />
+              <span className="font-medium text-green-600 text-xs sm:text-sm">
+                {onlineCount} joueur{onlineCount > 1 ? "s" : ""} en ligne
+              </span>
+            </div>
+          )}
+
           <div className="inline-flex items-center gap-2 bg-primary/10 px-3 sm:px-4 py-2 rounded-full mb-4 sm:mb-6">
             <Flame className="w-4 h-4 sm:w-5 sm:h-5 text-primary" />
             <span className="font-semibold text-primary text-sm sm:text-base">Apprendre la Bible n'a jamais été aussi fun</span>
