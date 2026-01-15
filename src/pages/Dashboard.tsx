@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { BookOpen, Star, Target, Trophy, ChevronRight, ScrollText, TrendingUp, Brain, Award, Swords } from "lucide-react";
+import { BookOpen, Star, Target, Trophy, ChevronRight, ScrollText, TrendingUp, Brain, Award, Swords, Users } from "lucide-react";
 import Header from "@/components/Header";
 import StreakCard from "@/components/StreakCard";
 import XPProgress from "@/components/XPProgress";
@@ -19,6 +19,7 @@ import { useUserProfile } from "@/hooks/useUserProfile";
 import { useVerseProgress } from "@/hooks/useVerseProgress";
 import { useLearningStats } from "@/hooks/useLearningStats";
 import { useAchievements } from "@/hooks/useAchievements";
+import { useOnlinePlayers } from "@/hooks/useOnlinePlayers";
 
 const Dashboard = () => {
   const navigate = useNavigate();
@@ -27,6 +28,7 @@ const Dashboard = () => {
   const { verseProgress, getVersesToReview } = useVerseProgress();
   const { todayStats } = useLearningStats();
   const { achievements } = useAchievements();
+  const { onlineCount, isConnected } = useOnlinePlayers();
   const [activeTab, setActiveTab] = useState("lessons");
   const [pvpOpen, setPvpOpen] = useState(false);
 
@@ -96,9 +98,23 @@ const Dashboard = () => {
       <main className="container max-w-4xl mx-auto px-4 py-8">
         {/* Welcome section */}
         <div className="mb-8">
-          <h1 className="text-3xl font-display font-bold text-foreground mb-2">
-            Bonjour, {userStats.displayName} ! 👋
-          </h1>
+          <div className="flex items-center justify-between mb-2">
+            <h1 className="text-3xl font-display font-bold text-foreground">
+              Bonjour, {userStats.displayName} ! 👋
+            </h1>
+            {isConnected && (
+              <div className="flex items-center gap-2 bg-green-500/10 px-3 py-1.5 rounded-full">
+                <span className="relative flex h-2 w-2">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+                  <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
+                </span>
+                <Users className="w-3.5 h-3.5 text-green-600" />
+                <span className="font-medium text-green-600 text-xs sm:text-sm">
+                  {onlineCount} en ligne
+                </span>
+              </div>
+            )}
+          </div>
           <p className="text-muted-foreground">
             Continuez votre voyage à travers les Écritures
           </p>
