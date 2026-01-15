@@ -1,14 +1,14 @@
 version: '3.8'
 
 services:
-  bible-journey:
+  app:
     build:
       context: .
       dockerfile: Dockerfile
     container_name: bible-journey
     restart: unless-stopped
     ports:
-      - "127.0.0.1:3010:80"  # Port local uniquement, Nginx fait le reverse proxy
+      - "3010:80"
     environment:
       - NODE_ENV=production
     healthcheck:
@@ -17,8 +17,3 @@ services:
       timeout: 10s
       retries: 3
       start_period: 10s
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.bible-journey.rule=Host(`bible-journey.woutils.com`)"
-      - "traefik.http.routers.bible-journey.entrypoints=websecure"
-      - "traefik.http.routers.bible-journey.tls.certresolver=letsencrypt"
