@@ -71,6 +71,13 @@ const LessonPage = () => {
   const [currentBlock, setCurrentBlock] = useState(0);
   const [blockScore, setBlockScore] = useState(0);
   const [blockXp, setBlockXp] = useState(0);
+  const [isGameOver, setIsGameOver] = useState(false);
+  const [failedQuestion, setFailedQuestion] = useState<{
+    question: string;
+    correctAnswer: string;
+    verseReference?: string;
+    chapter?: string;
+  } | null>(null);
 
   const maxLives = profile?.max_lives ?? 5;
   
@@ -130,7 +137,7 @@ const LessonPage = () => {
     } else {
       onWrongAnswer();
       playSound("wrong");
-      
+
       // Check if shield is active
       if (hasShield) {
         setHasShield(false);
@@ -138,7 +145,27 @@ const LessonPage = () => {
         toast.info("🛡️ Bouclier utilisé ! Vie protégée.", { duration: 2000 });
         return;
       }
-      
+
+      // Get the current question details
+      const currentQ = questions[currentQuestion];
+      const correctOption = currentQ.options.find(o => o.isCorrect);
+
+      // Extract chapter from verseReference (e.g., "Marc 2:5" -> "Marc 2")
+      let chapterRef = currentQ.verseReference;
+      if (chapterRef) {
+        // Remove verse number (everything after the colon)
+        chapterRef = chapterRef.replace(/:\d+(-\d+)?$/, "");
+      }
+
+      // Store the failed question info and end the game
+      setFailedQuestion({
+        question: currentQ.question,
+        correctAnswer: correctOption?.text || "",
+        verseReference: currentQ.verseReference,
+        chapter: chapterRef,
+      });
+      setIsGameOver(true);
+
       setLives((prev) => {
         const newLives = Math.max(0, prev - 1);
         updateLives.mutate(-1);
@@ -230,6 +257,66 @@ const LessonPage = () => {
     );
   }
 
+  // Game Over screen when player answers incorrectly
+  if (isGameOver && failedQuestion) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center p-4">
+        <div className="bg-card rounded-2xl p-8 shadow-card border border-border max-w-md w-full text-center animate-slide-in">
+          <div className="w-20 h-20 mx-auto mb-6 rounded-full bg-amber-500/10 flex items-center justify-center">
+            <BookOpen className="w-10 h-10 text-amber-600" />
+          </div>
+          <h2 className="text-2xl font-display font-bold text-foreground mb-2">
+            Oups, ce n'est pas la bonne réponse !
+          </h2>
+
+          <div className="bg-muted/50 rounded-xl p-4 mb-4 text-left">
+            <p className="text-sm text-muted-foreground mb-2">La bonne réponse était :</p>
+            <p className="font-semibold text-success">{failedQuestion.correctAnswer}</p>
+          </div>
+
+          <div className="bg-primary/5 border border-primary/20 rounded-xl p-4 mb-6">
+            <p className="text-muted-foreground mb-3">
+              📖 Prenez le temps de lire ce chapitre dans votre Bible pour mieux comprendre ce passage !
+            </p>
+            {failedQuestion.chapter && (
+              <p className="text-lg font-bold text-primary">
+                {failedQuestion.chapter}
+              </p>
+            )}
+          </div>
+
+          <div className="text-sm text-muted-foreground mb-6">
+            <p>Score actuel : <span className="font-bold">{score}</span> bonne{score > 1 ? "s" : ""} réponse{score > 1 ? "s" : ""}</p>
+            {xpEarned > 0 && <p>XP gagnés : <span className="font-bold text-primary">+{xpEarned}</span></p>}
+          </div>
+
+          <div className="space-y-3">
+            <Button onClick={() => navigate(bookId ? `/book/${bookId}` : "/dashboard")} className="w-full" size="lg">
+              Retour au livre
+            </Button>
+            <Button
+              variant="outline"
+              onClick={() => {
+                setIsGameOver(false);
+                setFailedQuestion(null);
+                setCurrentQuestion(0);
+                setCurrentBlock(0);
+                setScore(0);
+                setBlockScore(0);
+                setXpEarned(0);
+                setBlockXp(0);
+                resetCombo();
+              }}
+              className="w-full"
+            >
+              Réessayer le chapitre
+            </Button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   if (lives === 0) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center p-4">
@@ -247,10 +334,12 @@ const LessonPage = () => {
             <Button onClick={() => navigate("/dashboard")} className="w-full" size="lg">
               Retour au tableau de bord
             </Button>
-            <Button 
-              variant="outline" 
+            <Button
+              variant="outline"
               onClick={() => {
                 setLives(profile?.lives ?? 5);
+                setIsGameOver(false);
+                setFailedQuestion(null);
                 setCurrentQuestion(0);
                 setCurrentBlock(0);
                 setScore(0);
@@ -258,7 +347,7 @@ const LessonPage = () => {
                 setXpEarned(0);
                 setBlockXp(0);
                 resetCombo();
-              }} 
+              }}
               className="w-full"
             >
               Réessayer
