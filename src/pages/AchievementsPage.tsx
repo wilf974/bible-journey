@@ -89,7 +89,7 @@ const AchievementsPage = () => {
 
         {/* Categories tabs */}
         <Tabs value={activeCategory} onValueChange={setActiveCategory} className="w-full">
-          <TabsList className="grid w-full grid-cols-3 md:grid-cols-6 mb-6 h-auto p-1">
+          <TabsList className="grid w-full grid-cols-2 sm:grid-cols-3 md:grid-cols-6 mb-6 h-auto p-1">
             <TabsTrigger value="all" className="text-xs py-2">
               Tous
             </TabsTrigger>

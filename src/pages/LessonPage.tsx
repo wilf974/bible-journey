@@ -343,7 +343,7 @@ const LessonPage = () => {
       
       {/* Active power-ups indicator */}
       {(hasShield || hasDoubleXP) && (
-        <div className="fixed top-20 left-4 z-50 flex flex-col gap-2">
+        <div className="fixed top-20 left-2 sm:left-4 z-50 flex flex-col gap-1 sm:gap-2 scale-90 sm:scale-100 origin-top-left">
           {hasShield && (
             <div className="bg-blue-500/20 border border-blue-500/30 text-blue-600 px-3 py-1.5 rounded-lg flex items-center gap-2 text-sm font-medium">
               <Shield className="w-4 h-4" />

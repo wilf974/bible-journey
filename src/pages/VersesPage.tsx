@@ -95,7 +95,7 @@ const VersesPage = () => {
 
       <main className="container max-w-4xl mx-auto px-4 py-8">
         {/* Stats summary */}
-        <div className="grid grid-cols-3 gap-4 mb-8">
+        <div className="grid grid-cols-3 gap-2 sm:gap-4 mb-8">
           <div className="bg-card rounded-xl p-4 border border-border text-center">
             <div className="text-2xl font-bold text-foreground">{totalVerses}</div>
             <div className="text-sm text-muted-foreground">Total</div>

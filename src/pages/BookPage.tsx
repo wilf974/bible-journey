@@ -95,7 +95,7 @@ const BookPage = () => {
             const nextSequentialChapter = highestCompleted + 1;
 
             return (
-              <div className="grid grid-cols-5 sm:grid-cols-8 md:grid-cols-10 gap-2">
+              <div className="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-8 lg:grid-cols-10 gap-2">
                 {Array.from({ length: book.chaptersCount }, (_, i) => i + 1).map((chapter) => {
                   const hasQuestions = availableChapters.includes(chapter);
                   const isCompleted = completedChaptersArray.includes(chapter);
