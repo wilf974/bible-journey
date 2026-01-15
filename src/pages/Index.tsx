@@ -40,82 +40,80 @@ const Index = () => {
       {/* Hero Section */}
       <section className="relative overflow-hidden gradient-hero">
         {/* Navigation */}
-        <nav className="container max-w-6xl mx-auto px-4 py-6 flex items-center justify-between">
+        <nav className="container max-w-6xl mx-auto px-4 py-4 sm:py-6 flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <div className="w-12 h-12 rounded-xl gradient-gold flex items-center justify-center shadow-button">
-              <span className="text-2xl">📖</span>
+            <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl gradient-gold flex items-center justify-center shadow-button">
+              <span className="text-xl sm:text-2xl">📖</span>
             </div>
-            <span className="font-display font-bold text-2xl text-foreground">
+            <span className="font-display font-bold text-xl sm:text-2xl text-foreground hidden sm:block">
               BibleQuest
             </span>
           </div>
-          <div className="flex items-center gap-4">
-            <Button variant="ghost" onClick={() => navigate("/auth")}>
+          <div className="flex items-center gap-2 sm:gap-4">
+            <Button variant="ghost" size="sm" onClick={() => navigate("/auth")} className="text-sm">
               Connexion
             </Button>
-            <Button onClick={() => navigate("/auth")}>
+            <Button size="sm" onClick={() => navigate("/auth")} className="text-sm">
               Commencer
             </Button>
           </div>
         </nav>
 
         {/* Hero Content */}
-        <div className="container max-w-6xl mx-auto px-4 py-20 text-center">
-          <div className="inline-flex items-center gap-2 bg-primary/10 px-4 py-2 rounded-full mb-6">
-            <Flame className="w-5 h-5 text-primary" />
-            <span className="font-semibold text-primary">Apprendre la Bible n'a jamais été aussi fun</span>
+        <div className="container max-w-6xl mx-auto px-4 py-12 sm:py-20 text-center">
+          <div className="inline-flex items-center gap-2 bg-primary/10 px-3 sm:px-4 py-2 rounded-full mb-4 sm:mb-6">
+            <Flame className="w-4 h-4 sm:w-5 sm:h-5 text-primary" />
+            <span className="font-semibold text-primary text-sm sm:text-base">Apprendre la Bible n'a jamais été aussi fun</span>
           </div>
-          
-          <h1 className="text-5xl md:text-7xl font-display font-bold text-foreground mb-6 leading-tight">
+
+          <h1 className="text-3xl sm:text-5xl md:text-7xl font-display font-bold text-foreground mb-4 sm:mb-6 leading-tight">
             Découvrez la Bible
             <br />
             <span className="text-gradient">comme jamais</span>
           </h1>
-          
-          <p className="text-xl text-muted-foreground max-w-2xl mx-auto mb-10">
-            Une application ludique et complète pour apprendre toute la Bible, 
+
+          <p className="text-base sm:text-xl text-muted-foreground max-w-2xl mx-auto mb-8 sm:mb-10 px-2">
+            Une application ludique et complète pour apprendre toute la Bible,
             chapitre par chapitre, avec des quiz interactifs et un système de progression addictif.
           </p>
 
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-            <Button 
-              size="xl" 
-              variant="hero" 
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4 px-4">
+            <Button
+              size="lg"
+              variant="hero"
               onClick={() => navigate("/auth")}
-              className="min-w-[250px]"
+              className="w-full sm:w-auto sm:min-w-[250px]"
             >
               Commencer gratuitement
               <ArrowRight className="w-5 h-5 ml-2" />
             </Button>
-            <Button 
-              size="xl" 
+            <Button
+              size="lg"
               variant="outline"
               onClick={() => navigate("/dashboard")}
+              className="w-full sm:w-auto"
             >
               Voir la démo
             </Button>
           </div>
 
           {/* Stats */}
-          <div className="flex flex-wrap items-center justify-center gap-8 mt-16">
+          <div className="grid grid-cols-2 sm:flex sm:flex-wrap items-center justify-center gap-4 sm:gap-8 mt-10 sm:mt-16 px-4">
             <div className="text-center">
-              <p className="text-4xl font-display font-bold text-foreground">66</p>
-              <p className="text-muted-foreground">Livres</p>
+              <p className="text-2xl sm:text-4xl font-display font-bold text-foreground">66</p>
+              <p className="text-sm sm:text-base text-muted-foreground">Livres</p>
             </div>
-            <div className="w-px h-12 bg-border hidden sm:block" />
             <div className="text-center">
-              <p className="text-4xl font-display font-bold text-foreground">1189</p>
-              <p className="text-muted-foreground">Chapitres</p>
+              <p className="text-2xl sm:text-4xl font-display font-bold text-foreground">1189</p>
+              <p className="text-sm sm:text-base text-muted-foreground">Chapitres</p>
             </div>
-            <div className="w-px h-12 bg-border hidden sm:block" />
             <div className="text-center">
-              <p className="text-4xl font-display font-bold text-foreground">31K+</p>
-              <p className="text-muted-foreground">Versets</p>
+              <p className="text-2xl sm:text-4xl font-display font-bold text-foreground">31K+</p>
+              <p className="text-sm sm:text-base text-muted-foreground">Versets</p>
             </div>
-            <div className="w-px h-12 bg-border hidden sm:block" />
             <div className="text-center">
-              <p className="text-4xl font-display font-bold text-foreground">∞</p>
-              <p className="text-muted-foreground">Sagesse</p>
+              <p className="text-2xl sm:text-4xl font-display font-bold text-foreground">∞</p>
+              <p className="text-sm sm:text-base text-muted-foreground">Sagesse</p>
             </div>
           </div>
         </div>
@@ -126,13 +124,13 @@ const Index = () => {
       </section>
 
       {/* Features Section */}
-      <section className="py-20 bg-card">
+      <section className="py-12 sm:py-20 bg-card">
         <div className="container max-w-6xl mx-auto px-4">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl font-display font-bold text-foreground mb-4">
+          <div className="text-center mb-8 sm:mb-16">
+            <h2 className="text-2xl sm:text-4xl font-display font-bold text-foreground mb-3 sm:mb-4">
               Apprenez en vous amusant
             </h2>
-            <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
+            <p className="text-base sm:text-xl text-muted-foreground max-w-2xl mx-auto">
               Une expérience d'apprentissage inspirée des meilleures apps de langues
             </p>
           </div>
@@ -157,15 +155,15 @@ const Index = () => {
       </section>
 
       {/* Benefits Section */}
-      <section className="py-20">
+      <section className="py-12 sm:py-20">
         <div className="container max-w-6xl mx-auto px-4">
-          <div className="grid lg:grid-cols-2 gap-12 items-center">
+          <div className="grid lg:grid-cols-2 gap-8 sm:gap-12 items-center">
             <div>
-              <h2 className="text-4xl font-display font-bold text-foreground mb-6">
+              <h2 className="text-2xl sm:text-4xl font-display font-bold text-foreground mb-4 sm:mb-6">
                 Devenez expert de la Bible
               </h2>
-              <p className="text-xl text-muted-foreground mb-8">
-                Que vous soyez débutant ou que vous connaissiez déjà bien les Écritures, 
+              <p className="text-base sm:text-xl text-muted-foreground mb-6 sm:mb-8">
+                Que vous soyez débutant ou que vous connaissiez déjà bien les Écritures,
                 BibleQuest s'adapte à votre niveau pour vous faire progresser.
               </p>
               
@@ -237,18 +235,18 @@ const Index = () => {
       </section>
 
       {/* CTA Section */}
-      <section className="py-20 gradient-gold">
+      <section className="py-12 sm:py-20 gradient-gold">
         <div className="container max-w-4xl mx-auto px-4 text-center">
-          <h2 className="text-4xl font-display font-bold text-primary-foreground mb-6">
+          <h2 className="text-2xl sm:text-4xl font-display font-bold text-primary-foreground mb-4 sm:mb-6">
             Prêt à commencer votre voyage ?
           </h2>
-          <p className="text-xl text-primary-foreground/80 mb-10">
+          <p className="text-base sm:text-xl text-primary-foreground/80 mb-6 sm:mb-10">
             Rejoignez des milliers de personnes qui découvrent la Bible chaque jour
           </p>
-          <Button 
-            size="xl" 
+          <Button
+            size="lg"
             variant="outline"
-            className="bg-white text-primary border-white hover:bg-white/90 min-w-[250px]"
+            className="bg-white text-primary border-white hover:bg-white/90 w-full sm:w-auto sm:min-w-[250px]"
             onClick={() => navigate("/auth")}
           >
             Commencer maintenant
