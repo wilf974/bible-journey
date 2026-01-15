@@ -269,20 +269,18 @@ const LessonPage = () => {
             Oups, ce n'est pas la bonne réponse !
           </h2>
 
-          <div className="bg-muted/50 rounded-xl p-4 mb-4 text-left">
-            <p className="text-sm text-muted-foreground mb-2">La bonne réponse était :</p>
-            <p className="font-semibold text-success">{failedQuestion.correctAnswer}</p>
-          </div>
-
           <div className="bg-primary/5 border border-primary/20 rounded-xl p-4 mb-6">
             <p className="text-muted-foreground mb-3">
-              📖 Prenez le temps de lire ce chapitre dans votre Bible pour mieux comprendre ce passage !
+              📖 Ouvrez votre Bible et cherchez la réponse dans ce passage :
             </p>
             {failedQuestion.chapter && (
-              <p className="text-lg font-bold text-primary">
+              <p className="text-2xl font-bold text-primary mb-2">
                 {failedQuestion.chapter}
               </p>
             )}
+            <p className="text-sm text-muted-foreground italic">
+              La lecture de la Parole de Dieu vous aidera à mieux retenir !
+            </p>
           </div>
 
           <div className="text-sm text-muted-foreground mb-6">
