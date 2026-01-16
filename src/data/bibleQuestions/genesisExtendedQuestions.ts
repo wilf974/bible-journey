@@ -188,6 +188,38 @@ export const genesisExtendedQuestions: QuizQuestion[] = [
     xpReward: 10,
   },
   
+  // Chapitre 10 - Table des nations
+  {
+    id: "gen10-1",
+    bookId: "genesis",
+    chapter: 10,
+    type: "multiple_choice",
+    question: "De quel fils de Noé descendent les peuples de Canaan ?",
+    options: [
+      { id: "a", text: "Sem", isCorrect: false },
+      { id: "b", text: "Cham", isCorrect: true },
+      { id: "c", text: "Japhet", isCorrect: false },
+      { id: "d", text: "Tous les trois", isCorrect: false },
+    ],
+    verseReference: "Genèse 10:6",
+    xpReward: 10,
+  },
+  {
+    id: "gen10-2",
+    bookId: "genesis",
+    chapter: 10,
+    type: "multiple_choice",
+    question: "Qui était Nimrod ?",
+    options: [
+      { id: "a", text: "Un prophète", isCorrect: false },
+      { id: "b", text: "Un vaillant chasseur devant l'Éternel", isCorrect: true },
+      { id: "c", text: "Un roi d'Égypte", isCorrect: false },
+      { id: "d", text: "Le fils d'Abraham", isCorrect: false },
+    ],
+    verseReference: "Genèse 10:8-9",
+    xpReward: 10,
+  },
+
   // Chapitre 11 - Tour de Babel
   {
     id: "gen11-1",
@@ -265,6 +297,38 @@ export const genesisExtendedQuestions: QuizQuestion[] = [
     ],
     verseReference: "Genèse 12:2-3",
     xpReward: 15,
+  },
+
+  // Chapitre 13 - Abram et Lot se séparent
+  {
+    id: "gen13-1",
+    bookId: "genesis",
+    chapter: 13,
+    type: "multiple_choice",
+    question: "Pourquoi Abram et Lot durent-ils se séparer ?",
+    options: [
+      { id: "a", text: "Ils se disputèrent", isCorrect: false },
+      { id: "b", text: "Le pays ne pouvait les contenir tous les deux avec leurs troupeaux", isCorrect: true },
+      { id: "c", text: "Dieu l'ordonna", isCorrect: false },
+      { id: "d", text: "Lot voulait retourner en Égypte", isCorrect: false },
+    ],
+    verseReference: "Genèse 13:6",
+    xpReward: 10,
+  },
+  {
+    id: "gen13-2",
+    bookId: "genesis",
+    chapter: 13,
+    type: "multiple_choice",
+    question: "Quelle région Lot choisit-il pour s'installer ?",
+    options: [
+      { id: "a", text: "Les montagnes de Canaan", isCorrect: false },
+      { id: "b", text: "La plaine du Jourdain vers Sodome", isCorrect: true },
+      { id: "c", text: "Le désert du Néguev", isCorrect: false },
+      { id: "d", text: "L'Égypte", isCorrect: false },
+    ],
+    verseReference: "Genèse 13:10-12",
+    xpReward: 10,
   },
   {
     id: "gen14-1",
@@ -401,6 +465,38 @@ export const genesisExtendedQuestions: QuizQuestion[] = [
     verseReference: "Genèse 19:26",
     xpReward: 10,
   },
+
+  // Chapitre 20 - Abraham et Abimélec
+  {
+    id: "gen20-1",
+    bookId: "genesis",
+    chapter: 20,
+    type: "multiple_choice",
+    question: "Qui était Abimélec ?",
+    options: [
+      { id: "a", text: "Un prophète", isCorrect: false },
+      { id: "b", text: "Le roi de Guérar", isCorrect: true },
+      { id: "c", text: "Le frère d'Abraham", isCorrect: false },
+      { id: "d", text: "Un serviteur de Pharaon", isCorrect: false },
+    ],
+    verseReference: "Genèse 20:2",
+    xpReward: 10,
+  },
+  {
+    id: "gen20-2",
+    bookId: "genesis",
+    chapter: 20,
+    type: "multiple_choice",
+    question: "Pourquoi Abraham dit-il que Sara était sa sœur à Abimélec ?",
+    options: [
+      { id: "a", text: "Parce que c'était vrai", isCorrect: false },
+      { id: "b", text: "Par crainte d'être tué à cause de sa beauté", isCorrect: true },
+      { id: "c", text: "Pour obtenir des richesses", isCorrect: false },
+      { id: "d", text: "Parce qu'il avait honte d'elle", isCorrect: false },
+    ],
+    verseReference: "Genèse 20:11",
+    xpReward: 10,
+  },
   {
     id: "gen21-1",
     bookId: "genesis",
@@ -509,6 +605,38 @@ export const genesisExtendedQuestions: QuizQuestion[] = [
     verseReference: "Genèse 25:30-34",
     xpReward: 10,
   },
+
+  // Chapitre 26 - Isaac et Abimélec
+  {
+    id: "gen26-1",
+    bookId: "genesis",
+    chapter: 26,
+    type: "multiple_choice",
+    question: "Pourquoi Isaac dit-il que Rébecca était sa sœur ?",
+    options: [
+      { id: "a", text: "Parce qu'elle l'était vraiment", isCorrect: false },
+      { id: "b", text: "Par crainte d'être tué à cause d'elle", isCorrect: true },
+      { id: "c", text: "Pour plaisanter", isCorrect: false },
+      { id: "d", text: "Pour la protéger", isCorrect: false },
+    ],
+    verseReference: "Genèse 26:7",
+    xpReward: 10,
+  },
+  {
+    id: "gen26-2",
+    bookId: "genesis",
+    chapter: 26,
+    type: "multiple_choice",
+    question: "Comment Dieu bénit-il Isaac à Guérar ?",
+    options: [
+      { id: "a", text: "En lui donnant des enfants", isCorrect: false },
+      { id: "b", text: "Il récolta cent pour un et devint très riche", isCorrect: true },
+      { id: "c", text: "En le guérissant", isCorrect: false },
+      { id: "d", text: "En lui donnant une vision", isCorrect: false },
+    ],
+    verseReference: "Genèse 26:12-13",
+    xpReward: 10,
+  },
   {
     id: "gen27-1",
     bookId: "genesis",
@@ -570,6 +698,70 @@ export const genesisExtendedQuestions: QuizQuestion[] = [
     verseReference: "Genèse 29:23-25",
     xpReward: 10,
   },
+
+  // Chapitre 30 - Naissance des fils de Jacob
+  {
+    id: "gen30-1",
+    bookId: "genesis",
+    chapter: 30,
+    type: "multiple_choice",
+    question: "Pourquoi Rachel était-elle jalouse de Léa ?",
+    options: [
+      { id: "a", text: "Parce qu'elle était plus belle", isCorrect: false },
+      { id: "b", text: "Parce que Léa avait des enfants et elle non", isCorrect: true },
+      { id: "c", text: "Parce que Jacob préférait Léa", isCorrect: false },
+      { id: "d", text: "Parce que Léa était plus riche", isCorrect: false },
+    ],
+    verseReference: "Genèse 30:1",
+    xpReward: 10,
+  },
+  {
+    id: "gen30-2",
+    bookId: "genesis",
+    chapter: 30,
+    type: "multiple_choice",
+    question: "Comment Jacob devint-il riche chez Laban ?",
+    options: [
+      { id: "a", text: "Par le commerce", isCorrect: false },
+      { id: "b", text: "Par une stratégie avec les troupeaux tachetés et rayés", isCorrect: true },
+      { id: "c", text: "Par héritage", isCorrect: false },
+      { id: "d", text: "Par le vol", isCorrect: false },
+    ],
+    verseReference: "Genèse 30:37-43",
+    xpReward: 15,
+  },
+
+  // Chapitre 31 - Jacob quitte Laban
+  {
+    id: "gen31-1",
+    bookId: "genesis",
+    chapter: 31,
+    type: "multiple_choice",
+    question: "Pourquoi Jacob décida-t-il de quitter Laban ?",
+    options: [
+      { id: "a", text: "Pour des vacances", isCorrect: false },
+      { id: "b", text: "Parce que Laban et ses fils étaient jaloux de lui", isCorrect: true },
+      { id: "c", text: "Pour visiter son frère", isCorrect: false },
+      { id: "d", text: "Parce qu'il s'ennuyait", isCorrect: false },
+    ],
+    verseReference: "Genèse 31:1-3",
+    xpReward: 10,
+  },
+  {
+    id: "gen31-2",
+    bookId: "genesis",
+    chapter: 31,
+    type: "multiple_choice",
+    question: "Que Rachel déroba-t-elle à son père Laban ?",
+    options: [
+      { id: "a", text: "De l'or", isCorrect: false },
+      { id: "b", text: "Les théraphim (idoles domestiques)", isCorrect: true },
+      { id: "c", text: "Des moutons", isCorrect: false },
+      { id: "d", text: "Des vêtements", isCorrect: false },
+    ],
+    verseReference: "Genèse 31:19",
+    xpReward: 10,
+  },
   {
     id: "gen32-1",
     bookId: "genesis",
@@ -601,6 +793,70 @@ export const genesisExtendedQuestions: QuizQuestion[] = [
     explanation: "Israël signifie 'celui qui a lutté avec Dieu'.",
     xpReward: 15,
   },
+
+  // Chapitre 33 - Jacob retrouve Ésaü
+  {
+    id: "gen33-1",
+    bookId: "genesis",
+    chapter: 33,
+    type: "multiple_choice",
+    question: "Comment Ésaü réagit-il quand il retrouva Jacob ?",
+    options: [
+      { id: "a", text: "Il l'attaqua", isCorrect: false },
+      { id: "b", text: "Il courut à sa rencontre, l'embrassa et pleura", isCorrect: true },
+      { id: "c", text: "Il l'ignora", isCorrect: false },
+      { id: "d", text: "Il lui demanda de l'argent", isCorrect: false },
+    ],
+    verseReference: "Genèse 33:4",
+    xpReward: 10,
+  },
+  {
+    id: "gen33-2",
+    bookId: "genesis",
+    chapter: 33,
+    type: "multiple_choice",
+    question: "Où Jacob s'installa-t-il après avoir quitté Ésaü ?",
+    options: [
+      { id: "a", text: "En Égypte", isCorrect: false },
+      { id: "b", text: "À Sichem, en Canaan", isCorrect: true },
+      { id: "c", text: "À Béthel", isCorrect: false },
+      { id: "d", text: "À Séir", isCorrect: false },
+    ],
+    verseReference: "Genèse 33:18-19",
+    xpReward: 10,
+  },
+
+  // Chapitre 34 - Dina et Sichem
+  {
+    id: "gen34-1",
+    bookId: "genesis",
+    chapter: 34,
+    type: "multiple_choice",
+    question: "Comment s'appelait la fille de Jacob ?",
+    options: [
+      { id: "a", text: "Rachel", isCorrect: false },
+      { id: "b", text: "Dina", isCorrect: true },
+      { id: "c", text: "Léa", isCorrect: false },
+      { id: "d", text: "Bilha", isCorrect: false },
+    ],
+    verseReference: "Genèse 34:1",
+    xpReward: 10,
+  },
+  {
+    id: "gen34-2",
+    bookId: "genesis",
+    chapter: 34,
+    type: "multiple_choice",
+    question: "Quels fils de Jacob vengèrent leur sœur Dina ?",
+    options: [
+      { id: "a", text: "Joseph et Benjamin", isCorrect: false },
+      { id: "b", text: "Siméon et Lévi", isCorrect: true },
+      { id: "c", text: "Ruben et Juda", isCorrect: false },
+      { id: "d", text: "Dan et Nephtali", isCorrect: false },
+    ],
+    verseReference: "Genèse 34:25",
+    xpReward: 10,
+  },
   {
     id: "gen35-1",
     bookId: "genesis",
@@ -616,7 +872,39 @@ export const genesisExtendedQuestions: QuizQuestion[] = [
     verseReference: "Genèse 35:22-26",
     xpReward: 10,
   },
-  
+
+  // Chapitre 36 - Descendance d'Ésaü (Édom)
+  {
+    id: "gen36-1",
+    bookId: "genesis",
+    chapter: 36,
+    type: "multiple_choice",
+    question: "Quel autre nom désigne Ésaü ?",
+    options: [
+      { id: "a", text: "Israël", isCorrect: false },
+      { id: "b", text: "Édom", isCorrect: true },
+      { id: "c", text: "Moab", isCorrect: false },
+      { id: "d", text: "Ammon", isCorrect: false },
+    ],
+    verseReference: "Genèse 36:1",
+    xpReward: 10,
+  },
+  {
+    id: "gen36-2",
+    bookId: "genesis",
+    chapter: 36,
+    type: "multiple_choice",
+    question: "Dans quelle région Ésaü s'installa-t-il ?",
+    options: [
+      { id: "a", text: "Canaan", isCorrect: false },
+      { id: "b", text: "La montagne de Séir", isCorrect: true },
+      { id: "c", text: "L'Égypte", isCorrect: false },
+      { id: "d", text: "Haran", isCorrect: false },
+    ],
+    verseReference: "Genèse 36:8",
+    xpReward: 10,
+  },
+
   // Chapitres 37-50 - Joseph
   {
     id: "gen37-1",
@@ -662,6 +950,39 @@ export const genesisExtendedQuestions: QuizQuestion[] = [
     ],
     verseReference: "Genèse 37:28",
     xpReward: 10,
+  },
+
+  // Chapitre 38 - Juda et Tamar
+  {
+    id: "gen38-1",
+    bookId: "genesis",
+    chapter: 38,
+    type: "multiple_choice",
+    question: "Qui était Tamar ?",
+    options: [
+      { id: "a", text: "La sœur de Juda", isCorrect: false },
+      { id: "b", text: "La belle-fille de Juda (veuve de ses fils)", isCorrect: true },
+      { id: "c", text: "La servante de Jacob", isCorrect: false },
+      { id: "d", text: "Une prophétesse", isCorrect: false },
+    ],
+    verseReference: "Genèse 38:6-11",
+    xpReward: 10,
+  },
+  {
+    id: "gen38-2",
+    bookId: "genesis",
+    chapter: 38,
+    type: "multiple_choice",
+    question: "Quels jumeaux naquirent de Juda et Tamar ?",
+    options: [
+      { id: "a", text: "Jacob et Ésaü", isCorrect: false },
+      { id: "b", text: "Pérès et Zérach", isCorrect: true },
+      { id: "c", text: "Éphraïm et Manassé", isCorrect: false },
+      { id: "d", text: "Ruben et Siméon", isCorrect: false },
+    ],
+    verseReference: "Genèse 38:27-30",
+    explanation: "Pérès est dans la lignée de David et de Jésus.",
+    xpReward: 15,
   },
   {
     id: "gen39-1",
@@ -753,6 +1074,38 @@ export const genesisExtendedQuestions: QuizQuestion[] = [
     verseReference: "Genèse 42:1-3",
     xpReward: 10,
   },
+
+  // Chapitre 43 - Les frères reviennent avec Benjamin
+  {
+    id: "gen43-1",
+    bookId: "genesis",
+    chapter: 43,
+    type: "multiple_choice",
+    question: "Qui se porta garant pour Benjamin auprès de Jacob ?",
+    options: [
+      { id: "a", text: "Ruben", isCorrect: false },
+      { id: "b", text: "Juda", isCorrect: true },
+      { id: "c", text: "Siméon", isCorrect: false },
+      { id: "d", text: "Lévi", isCorrect: false },
+    ],
+    verseReference: "Genèse 43:8-9",
+    xpReward: 10,
+  },
+  {
+    id: "gen43-2",
+    bookId: "genesis",
+    chapter: 43,
+    type: "multiple_choice",
+    question: "Comment Joseph réagit-il en voyant Benjamin ?",
+    options: [
+      { id: "a", text: "Il l'ignora", isCorrect: false },
+      { id: "b", text: "Il fut ému et alla pleurer dans sa chambre", isCorrect: true },
+      { id: "c", text: "Il le fit emprisonner", isCorrect: false },
+      { id: "d", text: "Il révéla son identité", isCorrect: false },
+    ],
+    verseReference: "Genèse 43:30",
+    xpReward: 10,
+  },
   {
     id: "gen44-1",
     bookId: "genesis",
@@ -796,6 +1149,68 @@ export const genesisExtendedQuestions: QuizQuestion[] = [
       { id: "d", text: "Alexandrie", isCorrect: false },
     ],
     verseReference: "Genèse 46:28-34",
+    xpReward: 10,
+  },
+  // Chapitre 47 - Jacob s'installe en Égypte
+  {
+    id: "gen47-1",
+    bookId: "genesis",
+    chapter: 47,
+    type: "multiple_choice",
+    question: "Quel âge avait Jacob quand il se présenta devant Pharaon ?",
+    options: [
+      { id: "a", text: "100 ans", isCorrect: false },
+      { id: "b", text: "130 ans", isCorrect: true },
+      { id: "c", text: "147 ans", isCorrect: false },
+      { id: "d", text: "120 ans", isCorrect: false },
+    ],
+    verseReference: "Genèse 47:9",
+    xpReward: 10,
+  },
+  {
+    id: "gen47-2",
+    bookId: "genesis",
+    chapter: 47,
+    type: "multiple_choice",
+    question: "Que fit Joseph pour acheter toute la terre d'Égypte pour Pharaon ?",
+    options: [
+      { id: "a", text: "Il paya en or", isCorrect: false },
+      { id: "b", text: "Il échangea du blé contre les terres pendant la famine", isCorrect: true },
+      { id: "c", text: "Il conquit les terres par la force", isCorrect: false },
+      { id: "d", text: "Il reçut les terres en cadeau", isCorrect: false },
+    ],
+    verseReference: "Genèse 47:20",
+    xpReward: 10,
+  },
+  // Chapitre 48 - Jacob bénit les fils de Joseph
+  {
+    id: "gen48-1",
+    bookId: "genesis",
+    chapter: 48,
+    type: "multiple_choice",
+    question: "Comment s'appellent les deux fils de Joseph que Jacob a bénis ?",
+    options: [
+      { id: "a", text: "Ruben et Siméon", isCorrect: false },
+      { id: "b", text: "Éphraïm et Manassé", isCorrect: true },
+      { id: "c", text: "Gad et Aser", isCorrect: false },
+      { id: "d", text: "Dan et Nephtali", isCorrect: false },
+    ],
+    verseReference: "Genèse 48:1",
+    xpReward: 10,
+  },
+  {
+    id: "gen48-2",
+    bookId: "genesis",
+    chapter: 48,
+    type: "multiple_choice",
+    question: "Pourquoi Joseph essaya-t-il de corriger Jacob lors de la bénédiction ?",
+    options: [
+      { id: "a", text: "Jacob s'était trompé de nom", isCorrect: false },
+      { id: "b", text: "Jacob avait croisé ses mains, mettant le cadet avant l'aîné", isCorrect: true },
+      { id: "c", text: "Jacob avait oublié les enfants", isCorrect: false },
+      { id: "d", text: "Jacob parlait trop bas", isCorrect: false },
+    ],
+    verseReference: "Genèse 48:17-19",
     xpReward: 10,
   },
   {
