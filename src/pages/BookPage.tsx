@@ -91,8 +91,23 @@ const BookPage = () => {
               const isCompleted = completedChaptersArray.includes(chapter);
               const chapterQuestions = bookId ? getQuestionsByBookChapter(bookId, chapter) : [];
 
-              // All chapters with questions are playable
-              const canPlay = hasQuestions;
+              // Find the index of this chapter in the availableChapters array
+              const chapterIndex = availableChapters.indexOf(chapter);
+
+              // A chapter is unlocked if:
+              // 1. It's completed (can replay), OR
+              // 2. It's the first available chapter and no chapters are completed yet, OR
+              // 3. The previous available chapter is completed (it's the next chapter to play)
+              const isFirstAvailable = chapterIndex === 0;
+              const previousChapter = chapterIndex > 0 ? availableChapters[chapterIndex - 1] : null;
+              const isPreviousCompleted = previousChapter !== null && completedChaptersArray.includes(previousChapter);
+
+              const isUnlocked = isCompleted ||
+                (hasQuestions && isFirstAvailable && completedChaptersArray.length === 0) ||
+                (hasQuestions && isPreviousCompleted);
+
+              // Can play only if unlocked and has questions
+              const canPlay = hasQuestions && isUnlocked;
 
               return (
                 <button
@@ -102,16 +117,18 @@ const BookPage = () => {
                   title={
                     isCompleted
                       ? `Chapitre ${chapter} - Terminé !`
-                      : hasQuestions
+                      : isUnlocked && hasQuestions
                         ? `Chapitre ${chapter} - ${chapterQuestions.length} questions`
-                        : `Chapitre ${chapter} - Bientôt disponible`
+                        : hasQuestions
+                          ? `Chapitre ${chapter} - Terminez le chapitre précédent`
+                          : `Chapitre ${chapter} - Bientôt disponible`
                   }
                   className={`
                     aspect-square rounded-xl flex items-center justify-center font-bold text-lg
                     transition-all duration-200
                     ${isCompleted
                       ? "bg-green-500 text-white shadow-md hover:opacity-90 hover:scale-105"
-                      : hasQuestions
+                      : isUnlocked && hasQuestions
                         ? "bg-primary text-primary-foreground hover:opacity-90 shadow-button hover:scale-105"
                         : "bg-muted text-muted-foreground cursor-not-allowed"
                     }
@@ -119,7 +136,7 @@ const BookPage = () => {
                 >
                   {isCompleted ? (
                     <CheckCircle className="w-5 h-5" />
-                  ) : hasQuestions ? (
+                  ) : isUnlocked && hasQuestions ? (
                     chapter
                   ) : (
                     <Lock className="w-4 h-4" />
