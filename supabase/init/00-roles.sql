@@ -25,14 +25,14 @@ BEGIN
     CREATE ROLE authenticator NOINHERIT LOGIN PASSWORD 'BibleJourney2026SecurePassword!';
   END IF;
 
-  -- Create supabase_auth_admin role
+  -- Create supabase_auth_admin role (needs LOGIN for GoTrue)
   IF NOT EXISTS (SELECT FROM pg_catalog.pg_roles WHERE rolname = 'supabase_auth_admin') THEN
-    CREATE ROLE supabase_auth_admin NOLOGIN NOINHERIT;
+    CREATE ROLE supabase_auth_admin LOGIN PASSWORD 'BibleJourney2026SecurePassword!' NOINHERIT;
   END IF;
 
   -- Create supabase_admin role
   IF NOT EXISTS (SELECT FROM pg_catalog.pg_roles WHERE rolname = 'supabase_admin') THEN
-    CREATE ROLE supabase_admin NOLOGIN NOINHERIT BYPASSRLS;
+    CREATE ROLE supabase_admin LOGIN PASSWORD 'BibleJourney2026SecurePassword!' NOINHERIT BYPASSRLS;
   END IF;
 END
 $$;
