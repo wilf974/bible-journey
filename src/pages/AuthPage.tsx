@@ -109,13 +109,13 @@ const AuthPage = () => {
           <form onSubmit={handleSubmit} className="space-y-6">
             {!isLogin && (
               <div className="space-y-2">
-                <Label htmlFor="name">Prénom</Label>
+                <Label htmlFor="name">Pseudo</Label>
                 <div className="relative">
                   <User className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
                   <Input
                     id="name"
                     type="text"
-                    placeholder="Votre prénom"
+                    placeholder="Votre pseudo (visible dans le classement)"
                     value={formData.name}
                     onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                     className="pl-10 h-12"
