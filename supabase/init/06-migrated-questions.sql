@@ -1,7 +1,7 @@
 -- =============================================
 -- Bible Journey - Migrated Questions
--- Generated on 2026-01-19T13:25:37.449Z
--- Total questions: 524
+-- Generated on 2026-01-19T13:34:36.295Z
+-- Total questions: 500
 -- =============================================
 
 -- Delete existing questions (but keep sample ones if needed)
@@ -9,7 +9,7 @@
 
 
 -- =============================================
--- GENESIS (126 questions)
+-- GENESIS (102 questions)
 -- =============================================
 
 INSERT INTO public.questions (id, book_id, chapter, question_type, question_text, verse_text, verse_reference, explanation, xp_reward) VALUES
@@ -62,21 +62,10 @@ INSERT INTO public.questions (id, book_id, chapter, question_type, question_text
 ('gen5-1', 'genesis', 5, 'multiple_choice', 'Quel âge avait Adam quand il mourut ?', NULL, NULL, NULL, 10),
 ('gen5-2', 'genesis', 5, 'multiple_choice', 'Qui est l''homme qui a vécu le plus longtemps dans la Bible ?', NULL, NULL, NULL, 10),
 ('gen5-3', 'genesis', 5, 'multiple_choice', 'Qu''est-il arrivé à Énoch ?', NULL, NULL, NULL, 10),
-('gen6-1', 'genesis', 6, 'multiple_choice', 'Pourquoi Dieu décida-t-il d''envoyer le déluge ?', NULL, NULL, NULL, 10),
-('gen6-2', 'genesis', 6, 'multiple_choice', 'Noé trouva grâce aux yeux de l''Éternel parce qu''il était...', NULL, NULL, NULL, 10),
 ('gen6-3', 'genesis', 6, 'multiple_choice', 'En quel matériau l''arche devait-elle être construite ?', NULL, NULL, NULL, 10),
-('gen7-1', 'genesis', 7, 'multiple_choice', 'Combien de jours et de nuits la pluie tomba-t-elle ?', NULL, NULL, NULL, 10),
-('gen7-2', 'genesis', 7, 'multiple_choice', 'Combien de personnes furent sauvées dans l''arche ?', NULL, NULL, NULL, 10),
-('gen8-1', 'genesis', 8, 'multiple_choice', 'Quel oiseau Noé envoya-t-il en premier pour voir si les eaux avaient baissé ?', NULL, NULL, NULL, 10),
-('gen8-2', 'genesis', 8, 'multiple_choice', 'Que rapporta la colombe lors de son deuxième envoi ?', NULL, NULL, NULL, 10),
-('gen9-1', 'genesis', 9, 'multiple_choice', 'Quel signe Dieu donna-t-il comme alliance après le déluge ?', NULL, NULL, NULL, 10),
 ('gen9-2', 'genesis', 9, 'multiple_choice', 'Quels étaient les trois fils de Noé ?', NULL, NULL, NULL, 10),
 ('gen10-1', 'genesis', 10, 'multiple_choice', 'De quel fils de Noé descendent les peuples de Canaan ?', NULL, NULL, NULL, 10),
 ('gen10-2', 'genesis', 10, 'multiple_choice', 'Qui était Nimrod ?', NULL, NULL, NULL, 10),
-('gen11-1', 'genesis', 11, 'multiple_choice', 'Pourquoi les hommes construisirent-ils la tour de Babel ?', NULL, NULL, NULL, 10),
-('gen11-2', 'genesis', 11, 'multiple_choice', 'Comment Dieu arrêta-t-il la construction de la tour de Babel ?', NULL, NULL, NULL, 10),
-('gen12-1', 'genesis', 12, 'multiple_choice', 'Quel était le nom d''Abraham avant que Dieu le change ?', NULL, NULL, NULL, 10),
-('gen12-2', 'genesis', 12, 'multiple_choice', 'D''où Abram est-il parti quand Dieu l''a appelé ?', NULL, NULL, NULL, 10),
 ('gen12-3', 'genesis', 12, 'multiple_choice', 'Quelle promesse Dieu fit-il à Abram ?', NULL, NULL, NULL, 10),
 ('gen13-1', 'genesis', 13, 'multiple_choice', 'Pourquoi Abram et Lot durent-ils se séparer ?', NULL, NULL, NULL, 10),
 ('gen13-2', 'genesis', 13, 'multiple_choice', 'Quelle région Lot choisit-il pour s''installer ?', NULL, NULL, NULL, 10),
@@ -85,23 +74,16 @@ INSERT INTO public.questions (id, book_id, chapter, question_type, question_text
 ('gen16-1', 'genesis', 16, 'multiple_choice', 'Comment s''appelait la servante de Sara qui donna un fils à Abraham ?', NULL, NULL, NULL, 10),
 ('gen16-2', 'genesis', 16, 'multiple_choice', 'Comment s''appelait le fils d''Abraham et d''Agar ?', NULL, NULL, NULL, 10),
 ('gen17-1', 'genesis', 17, 'multiple_choice', 'Quel signe de l''alliance Dieu institua-t-il avec Abraham ?', NULL, NULL, NULL, 10),
-('gen18-1', 'genesis', 18, 'multiple_choice', 'Combien de visiteurs Abraham reçut-il près des chênes de Mamré ?', NULL, NULL, NULL, 10),
 ('gen18-2', 'genesis', 18, 'multiple_choice', 'Abraham a négocié avec Dieu pour épargner Sodome s''il y avait au moins...', NULL, NULL, NULL, 10),
 ('gen19-1', 'genesis', 19, 'multiple_choice', 'Qui fut sauvé de la destruction de Sodome ?', NULL, NULL, NULL, 10),
 ('gen19-2', 'genesis', 19, 'multiple_choice', 'En quoi la femme de Lot fut-elle transformée ?', NULL, NULL, NULL, 10),
 ('gen20-1', 'genesis', 20, 'multiple_choice', 'Qui était Abimélec ?', NULL, NULL, NULL, 10),
 ('gen20-2', 'genesis', 20, 'multiple_choice', 'Pourquoi Abraham dit-il que Sara était sa sœur à Abimélec ?', NULL, NULL, NULL, 10),
-('gen21-1', 'genesis', 21, 'multiple_choice', 'Que signifie le nom ''Isaac'' ?', NULL, NULL, NULL, 10),
-('gen22-1', 'genesis', 22, 'multiple_choice', 'Où Dieu demanda-t-il à Abraham de sacrifier Isaac ?', NULL, NULL, NULL, 10),
-('gen22-2', 'genesis', 22, 'multiple_choice', 'Qu''est-ce qui remplaça Isaac sur l''autel du sacrifice ?', NULL, NULL, NULL, 10),
 ('gen23-1', 'genesis', 23, 'multiple_choice', 'Où Sara fut-elle enterrée ?', NULL, NULL, NULL, 10),
 ('gen24-1', 'genesis', 24, 'multiple_choice', 'Qui le serviteur d''Abraham trouva-t-il comme épouse pour Isaac ?', NULL, NULL, NULL, 10),
-('gen25-1', 'genesis', 25, 'multiple_choice', 'Qui était l''aîné des jumeaux d''Isaac et Rébecca ?', NULL, NULL, NULL, 10),
-('gen25-2', 'genesis', 25, 'multiple_choice', 'Contre quoi Ésaü vendit-il son droit d''aînesse ?', NULL, NULL, NULL, 10),
 ('gen26-1', 'genesis', 26, 'multiple_choice', 'Pourquoi Isaac dit-il que Rébecca était sa sœur ?', NULL, NULL, NULL, 10),
 ('gen26-2', 'genesis', 26, 'multiple_choice', 'Comment Dieu bénit-il Isaac à Guérar ?', NULL, NULL, NULL, 10),
 ('gen27-1', 'genesis', 27, 'multiple_choice', 'Comment Jacob trompa-t-il son père Isaac pour obtenir la bénédiction ?', NULL, NULL, NULL, 10),
-('gen28-1', 'genesis', 28, 'multiple_choice', 'Que vit Jacob dans son rêve à Béthel ?', NULL, NULL, NULL, 10),
 ('gen29-1', 'genesis', 29, 'multiple_choice', 'Combien d''années Jacob travailla-t-il pour épouser Rachel ?', NULL, NULL, NULL, 10),
 ('gen29-2', 'genesis', 29, 'multiple_choice', 'Qui Laban donna-t-il d''abord à Jacob à la place de Rachel ?', NULL, NULL, NULL, 10),
 ('gen30-1', 'genesis', 30, 'multiple_choice', 'Pourquoi Rachel était-elle jalouse de Léa ?', NULL, NULL, NULL, 10),
@@ -117,21 +99,15 @@ INSERT INTO public.questions (id, book_id, chapter, question_type, question_text
 ('gen35-1', 'genesis', 35, 'multiple_choice', 'Combien de fils Jacob eut-il au total ?', NULL, NULL, NULL, 10),
 ('gen36-1', 'genesis', 36, 'multiple_choice', 'Quel autre nom désigne Ésaü ?', NULL, NULL, NULL, 10),
 ('gen36-2', 'genesis', 36, 'multiple_choice', 'Dans quelle région Ésaü s''installa-t-il ?', NULL, NULL, NULL, 10),
-('gen37-1', 'genesis', 37, 'multiple_choice', 'Quel vêtement spécial Jacob donna-t-il à Joseph ?', NULL, NULL, NULL, 10),
-('gen37-2', 'genesis', 37, 'multiple_choice', 'Que virent Joseph dans ses rêves ?', NULL, NULL, NULL, 10),
 ('gen37-3', 'genesis', 37, 'multiple_choice', 'À qui les frères de Joseph le vendirent-ils ?', NULL, NULL, NULL, 10),
 ('gen38-1', 'genesis', 38, 'multiple_choice', 'Qui était Tamar ?', NULL, NULL, NULL, 10),
 ('gen38-2', 'genesis', 38, 'multiple_choice', 'Quels jumeaux naquirent de Juda et Tamar ?', NULL, NULL, NULL, 10),
-('gen39-1', 'genesis', 39, 'multiple_choice', 'Qui acheta Joseph en Égypte ?', NULL, NULL, NULL, 10),
 ('gen39-2', 'genesis', 39, 'multiple_choice', 'Pourquoi Joseph fut-il mis en prison ?', NULL, NULL, NULL, 10),
 ('gen40-1', 'genesis', 40, 'multiple_choice', 'Quels serviteurs de Pharaon Joseph interpréta-t-il les rêves en prison ?', NULL, NULL, NULL, 10),
-('gen41-1', 'genesis', 41, 'multiple_choice', 'Que représentaient les 7 vaches grasses et 7 vaches maigres du rêve de Pharaon ?', NULL, NULL, NULL, 10),
-('gen41-2', 'genesis', 41, 'multiple_choice', 'Quel poste Pharaon donna-t-il à Joseph ?', NULL, NULL, NULL, 10),
 ('gen42-1', 'genesis', 42, 'multiple_choice', 'Pourquoi les frères de Joseph vinrent-ils en Égypte ?', NULL, NULL, NULL, 10),
 ('gen43-1', 'genesis', 43, 'multiple_choice', 'Qui se porta garant pour Benjamin auprès de Jacob ?', NULL, NULL, NULL, 10),
 ('gen43-2', 'genesis', 43, 'multiple_choice', 'Comment Joseph réagit-il en voyant Benjamin ?', NULL, NULL, NULL, 10),
 ('gen44-1', 'genesis', 44, 'multiple_choice', 'Dans le sac de quel frère la coupe de Joseph fut-elle cachée ?', NULL, NULL, NULL, 10),
-('gen45-1', 'genesis', 45, 'multiple_choice', 'Quelle fut la réaction de Joseph quand il se révéla à ses frères ?', NULL, NULL, NULL, 10),
 ('gen46-1', 'genesis', 46, 'multiple_choice', 'Dans quelle région d''Égypte la famille de Jacob s''installa-t-elle ?', NULL, NULL, NULL, 10),
 ('gen47-1', 'genesis', 47, 'multiple_choice', 'Quel âge avait Jacob quand il se présenta devant Pharaon ?', NULL, NULL, NULL, 10),
 ('gen47-2', 'genesis', 47, 'multiple_choice', 'Que fit Joseph pour acheter toute la terre d''Égypte pour Pharaon ?', NULL, NULL, NULL, 10),

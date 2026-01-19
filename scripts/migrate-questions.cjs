@@ -195,8 +195,21 @@ questionFiles.forEach(file => {
 
 console.log(`\nTotal questions extracted: ${allQuestions.length}`);
 
+// Remove duplicates by ID (keep first occurrence)
+const seenIds = new Set();
+const uniqueQuestions = allQuestions.filter(q => {
+  if (seenIds.has(q.id)) {
+    return false;
+  }
+  seenIds.add(q.id);
+  return true;
+});
+
+console.log(`After removing duplicates: ${uniqueQuestions.length} unique questions`);
+console.log(`Removed ${allQuestions.length - uniqueQuestions.length} duplicates`);
+
 // Generate SQL
-const sql = generateSql(allQuestions);
+const sql = generateSql(uniqueQuestions);
 
 // Write to file
 const outputPath = path.join(basePath, 'supabase/init/06-migrated-questions.sql');
