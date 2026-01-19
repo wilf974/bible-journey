@@ -14,6 +14,109 @@ export type Database = {
   }
   public: {
     Tables: {
+      books: {
+        Row: {
+          id: string
+          name: string
+          testament: 'old' | 'new'
+          chapters_count: number
+          sort_order: number
+        }
+        Insert: {
+          id: string
+          name: string
+          testament: 'old' | 'new'
+          chapters_count: number
+          sort_order: number
+        }
+        Update: {
+          id?: string
+          name?: string
+          testament?: 'old' | 'new'
+          chapters_count?: number
+          sort_order?: number
+        }
+        Relationships: []
+      }
+      questions: {
+        Row: {
+          id: string
+          book_id: string
+          chapter: number
+          question_type: 'multiple_choice' | 'fill_blank' | 'true_false' | 'verse_order'
+          question_text: string
+          verse_text: string | null
+          verse_reference: string | null
+          explanation: string | null
+          xp_reward: number
+          created_at: string
+        }
+        Insert: {
+          id: string
+          book_id: string
+          chapter: number
+          question_type: 'multiple_choice' | 'fill_blank' | 'true_false' | 'verse_order'
+          question_text: string
+          verse_text?: string | null
+          verse_reference?: string | null
+          explanation?: string | null
+          xp_reward?: number
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          book_id?: string
+          chapter?: number
+          question_type?: 'multiple_choice' | 'fill_blank' | 'true_false' | 'verse_order'
+          question_text?: string
+          verse_text?: string | null
+          verse_reference?: string | null
+          explanation?: string | null
+          xp_reward?: number
+          created_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "questions_book_id_fkey"
+            columns: ["book_id"]
+            isOneToOne: false
+            referencedRelation: "books"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
+      question_options: {
+        Row: {
+          id: string
+          question_id: string
+          option_text: string
+          is_correct: boolean
+          sort_order: number
+        }
+        Insert: {
+          id: string
+          question_id: string
+          option_text: string
+          is_correct?: boolean
+          sort_order?: number
+        }
+        Update: {
+          id?: string
+          question_id?: string
+          option_text?: string
+          is_correct?: boolean
+          sort_order?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "question_options_question_id_fkey"
+            columns: ["question_id"]
+            isOneToOne: false
+            referencedRelation: "questions"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
       daily_challenges: {
         Row: {
           challenge_date: string
@@ -424,7 +527,20 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      questions_with_options: {
+        Row: {
+          id: string
+          book_id: string
+          chapter: number
+          question_type: 'multiple_choice' | 'fill_blank' | 'true_false' | 'verse_order'
+          question_text: string
+          verse_text: string | null
+          verse_reference: string | null
+          explanation: string | null
+          xp_reward: number
+          options: { id: string; text: string; isCorrect: boolean }[]
+        }
+      }
     }
     Functions: {
       [_ in never]: never
